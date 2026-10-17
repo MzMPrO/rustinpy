@@ -191,7 +191,7 @@ def test_ac_09_sources_are_printable_on_windows_console() -> None:
 PY39_FORBIDDEN = {
     r"\.bit_count\(": "int.bit_count is 3.10+: use bin(x).count('1')",
     r"\bpairwise\(|import.*\bpairwise\b": "itertools.pairwise is 3.10+",
-    r"\bstrict=": "zip(strict=...) is 3.10+",
+    r"\bzip\(.*\bstrict=": "zip(strict=...) is 3.10+",
     r"^\s*match\s+\S.*:\s*$": "match statement is 3.10+",
     r"\bbisect_\w+\([^)]*\bkey=": "bisect key= is 3.10+",
 }

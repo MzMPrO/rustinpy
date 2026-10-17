@@ -165,6 +165,43 @@ def test_ac_15_graph_tree_speed() -> None:
 
 
 @pytest.mark.slow
+def test_ac_15_dp_strings_bits_speed() -> None:
+    from rustinpy.bits import fwht_xor, sos_subset_sum
+    from rustinpy.dp import counting_tilings, elevator_rides, knuth_optimization, lis
+    from rustinpy.strings import (
+        AhoCorasick,
+        SuffixAutomaton,
+        kmp_find_all,
+        manacher,
+        suffix_array,
+        z_function,
+    )
+
+    rng = random.Random(4)
+    s5 = "".join(rng.choice("abc") for _ in range(10**5))
+    s6 = "".join(rng.choice("ab") for _ in range(10**6))
+    pats = ["".join(rng.choice("abc") for _ in range(rng.randint(1, 10))) for _ in range(10**4)]
+    arr = [rng.randint(1, 10**9) for _ in range(N)]
+    f = [rng.randint(0, 9) for _ in range(1 << 20)]
+    run_all(
+        [
+            ("suffix_array n = 1e5", 0.25, lambda: suffix_array(s5)),
+            ("SuffixAutomaton n = 1e5", 0.25, lambda: SuffixAutomaton(s5)),
+            ("z_function n = 1e6", 0.3, lambda: z_function(s6)),
+            ("kmp_find_all text 1e6", 0.6, lambda: kmp_find_all(s6, "abba")),
+            ("manacher n = 1e6", 0.8, lambda: manacher(s6)),
+            ("AhoCorasick 1e4 patterns, text 1e5", 0.5, lambda: AhoCorasick(pats).count(s5)),
+            ("lis n = 2e5", 0.3, lambda: lis(arr)),
+            ("counting_tilings 10 x 1000", 0.7, lambda: counting_tilings(10, 1000)),
+            ("elevator_rides n = 18", 0.7, lambda: elevator_rides(arr[:18], 10**9)),
+            ("knuth_optimization n = 2000", 1.6, lambda: knuth_optimization(arr[:2000])),
+            ("fwht_xor 2^20", 1.5, lambda: fwht_xor(list(f), False)),
+            ("sos_subset_sum 2^20", 1.2, lambda: sos_subset_sum(f, 20)),
+        ]
+    )
+
+
+@pytest.mark.slow
 def test_ac_15_mathx_speed() -> None:
     rng = random.Random(2)
     a = [rng.randrange(998244353) for _ in range(N)]

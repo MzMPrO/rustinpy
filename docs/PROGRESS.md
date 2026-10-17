@@ -45,6 +45,18 @@
 | `graph.escalators` | заглушка: условие ICPC-UZ 2023 E |
 | `graph.bus_companies` | заглушка: условие CSES Bus Companies не сверено |
 | `tree.fix_the_leak` | заглушка: что такое «агенты» и «цепочки» в ICPC-UZ 2025 F |
+| `dp.fence_painting` | ICPC-UZ 2023 F: правило соседей (формулы сверены перебором для «соседи различны») |
+| `strings.inverse_suffix_array` | формат CSES Inverse Suffix Array (алфавит a..z, вывод) |
+| `strings.string_functions` | заглушка: какие функции даёт CSES String Functions |
+| `strings.brands` | ICPC-UZ 2023 B: набор гласных (y?) и алфавит |
+| `strings.apostrophe_number` | заглушка: правило ICPC-UZ 2024 K |
+| `roman.roman_symmetry` | заглушка: условие ICPC-UZ 2023 C |
+| `roman.roman_product_unique` | заглушка: условие ICPC-UZ 2024 E |
+| `roman.roman_split_min_max` | ICPC-UZ 2025 G: что минимизируется / максимизируется |
+| `roman.scroogius_shortest` | заглушка: вторая часть ICPC-UZ 2025 G |
+| `bits.k_subset_xors` | CSES K Subset Xors: с кратностями или без |
+| `bits.all_subarray_xors` | формат CSES All Subarray Xors |
+| `bits.kenobi_skywalker` | заглушка: ограничения ICPC-UZ 2025 K |
 
 ## 2026-10-17 · Проект инициализирован (spec-first)
 - **Сделано:** созданы CLAUDE.md, docs/SPEC.md (ЧЕРНОВИК), DECISIONS.md, PROGRESS.md, команды и хуки
@@ -63,7 +75,7 @@
 
 ## 2026-10-17 · Этап 2: graph + tree
 - **Задание:** docs/handoff/000-kickoff.md, SPEC 4.3 (`rustinpy.graph`, `rustinpy.tree`)
-- **Сделано:** `graph` (64): обходы (BFS/итеративный DFS, компоненты, двудольность, циклы, обхват), кратчайшие пути (0-1 BFS, Дейкстра + путь/статистика/купон/состояния/k кратчайших, Беллман-Форд с -INF, отрицательный цикл, High Score, Флойд), DAG (Кан, лекс. минимум, Course Schedule II, подсчёт путей, длиннейший путь, достижимость битсетами), DSU/RollbackDSU/Краскал/Прим, SCC (Тарьян, Косараю, конденсация, Coin Collector, 2-SAT, Reachability Queries), мосты и точки сочленения, Эйлер (Хирхольцер), функциональные графы (подъёмы, Planets Cycles/Queries II), потоки (Диниц, Эдмондс-Карп, min-cut, непересекающиеся пути, min-cost flow), паросочетания (Хопкрофт-Карп, Кун, венгерский), гамильтонов путь, обход конём, Critical Cities, Flight Route Requests, Network Renovation, Strongly Connected / Even Outdegree Edges; `tree` (20): порядок обхода, размеры, диаметр, Tree Distances I/II, центроид, Euler tour, LCA (подъёмы и Euler + sparse table), паросочетание, Counting Paths, Subtree/Path Queries, HLD, центроидная декомпозиция, Fixed-Length Paths I/II, Distinct Colors, изоморфизм (AHU, с корнем и без). Всё без рекурсии (AC-08 проверяет AST)
+- **Сделано:** `graph` (63): обходы (BFS/итеративный DFS, компоненты, двудольность, циклы, обхват), кратчайшие пути (0-1 BFS, Дейкстра + путь/статистика/купон/состояния/k кратчайших, Беллман-Форд с -INF, отрицательный цикл, High Score, Флойд), DAG (Кан, лекс. минимум, Course Schedule II, подсчёт путей, длиннейший путь, достижимость битсетами), DSU/RollbackDSU/Краскал/Прим, SCC (Тарьян, Косараю, конденсация, Coin Collector, 2-SAT, Reachability Queries), мосты и точки сочленения, Эйлер (Хирхольцер), функциональные графы (подъёмы, Planets Cycles/Queries II), потоки (Диниц, Эдмондс-Карп, min-cut, непересекающиеся пути, min-cost flow), паросочетания (Хопкрофт-Карп, Кун, венгерский), гамильтонов путь, обход конём, Critical Cities, Flight Route Requests, Network Renovation, Strongly Connected / Even Outdegree Edges; `tree` (20): порядок обхода, размеры, диаметр, Tree Distances I/II, центроид, Euler tour, LCA (подъёмы и Euler + sparse table), паросочетание, Counting Paths, Subtree/Path Queries, HLD, центроидная декомпозиция, Fixed-Length Paths I/II, Distinct Colors, изоморфизм (AHU, с корнем и без). Всё без рекурсии (AC-08 проверяет AST)
 - **Тесты:** 1442 passed на 3.9 / 3.11 / 3.13 (+3 slow) · ruff ✅ · mypy --strict ✅ · каждая функция graph/tree сверена с перебором (Флойд, перечисление путей/разрезов/паросочетаний/перестановок, удаление вершин и рёбер, рекурсивный эталон DFS); `rustinpy export --modules graph,tree` → 3424 строки, компилируется, ширина ≤ 100
 - **Скорость (CPython 3.11):** bfs 2·10⁵/4·10⁵ 0.14 с · dijkstra 0.43 с · scc_tarjan 0.39 с · LCA build + 2·10⁵ запросов (глубина ~4·10⁴) 1.3 с · HLD + 5·10⁴ путей 0.65 с · fixed_length_paths 2·10⁵ 1.6 с, range 1.8 с · Dinic (единичный двудольный, 1.8·10⁵ рёбер) 0.23 с · Хопкрофт-Карп 10⁵+10⁵, 3·10⁵ рёбер 0.84 с · Флойд n=500 10.8 с (Python speed) · гамильтонов путь, полный граф n=18 2.7 с · венгерский 500×500 0.63 с
 - **Спеки:** SPEC.md — этап 2 отмечен; отклонения имён от 4.3 без смены смысла: `toposort_smallest_first` вместо `toposort_reverse_trick` (Course Schedule II), `reachability_queries` живёт в `graph/scc.py`, DSU и MST в одном файле `graph/dsu.py` (общий `requires`)
@@ -71,3 +83,14 @@
 - **Проблемы / долги:** заглушки `graph.escalators`, `graph.bus_companies`, `tree.fix_the_leak` (этап 5); `knights_tour` — эвристика с перезапусками (проверена на всех 64 стартах 8×8)
 - **Ручная проверка:** `rustinpy show dijkstra`, `rustinpy show HLD`, `rustinpy export --modules graph,tree --out trd.txt` — проверить читаемость в TRD
 - **Дальше:** этап 3 — `dp`, `strings` (+ `roman`), `bits`
+
+## 2026-10-17 · Этап 3: dp + strings + roman + bits
+- **Задание:** docs/handoff/000-kickoff.md, SPEC 4.3 (`dp`, `strings`, `roman`, `bits`)
+- **Сделано:** `dp` (30): монеты и кубики, рюкзаки 0/1 / неограниченный / ограниченный (двоичное разбиение), Array Description, Counting Towers, edit distance, LCS с восстановлением, LIS (строго / нестрого, с восстановлением), число возрастающих подпоследовательностей, Money Sums (битсет), Rectangle Cutting, Removal Game, Projects, Elevator Rides, Hamiltonian Flights, Counting Tilings (broken profile), digit DP (Counting Numbers), Li Chao, монотонный CHT, D&C-оптимизация (итеративная), Houses and Schools, оптимизация Кнута, Fence Painting (NV); `strings` (29): Z, префикс-функция, KMP, границы, периоды, минимальный сдвиг, Линдон, Required Substring (автомат КМП), хеши 2^61-1 и двойной, Palindrome Queries, бор, Word Combinations, Ахо-Корасик (count / first_pos), суффиксный массив + Kasai, различные подстроки, суффиксный автомат (k-я подстрока с повторами и без, длиннейший повтор, распределение длин), обратный SA, BWT и обратный, Манакер, All Palindromes, Distinct Subsequences, Shortest Subsequence, Brands (NV); `roman` (7); `bits` (22): popcount, Counting Bits, xor-бор, xor-базис (k-й, представимость), K Subset Xors, All Subarray Xors (FWHT), xor-пирамида, SOS DP, SOS Bit Problem, And Subset Count, Hamming Distance, FWHT xor/and/or и свёртки
+- **Тесты:** 2004 passed на 3.9 / 3.11 / 3.13 (+4 slow) · ruff ✅ · mypy --strict ✅ · перебор для каждой функции (все подмножества / разбиения / строки, рекурсивные эталоны, `str.find`, `sorted` суффиксов, множества подстрок); тесты нашли реальный баг `suffix_array` (ранги через `ord` ломали упаковку ключа) и семь моих неверных ожиданий в doctest — исправлено
+- **Скорость (CPython 3.11):** suffix_array 10⁵ 0.22 с / 10⁶ 4.3 с · SuffixAutomaton 10⁵ 0.21 с · z 10⁶ 0.23 с · манакер 10⁶ 0.75 с · counting_tilings 10×1000 0.66 с · elevator n=18 0.62 с, n=20 2.8 с · hamiltonian_flights полный n=18 0.5 с · knapsack_01 1000×10⁵ 13 с (Python speed) · Кнут n=2000 1.6 с · FWHT 2²⁰ 1.5 с · SOS 2²⁰ 1.2 с
+- **Спеки:** SPEC.md — этап 3 отмечен; отклонение: suffix_array за O(n log² n) с сортировкой в C (D-009)
+- **Решения:** D-009
+- **Проблемы / долги:** заглушки `string_functions`, `apostrophe_number`, `roman_symmetry`, `roman_product_unique`, `scroogius_shortest`, `kenobi_skywalker` (этап 5); `houses_and_schools` при n·k > ~3·10⁵ медленный
+- **Ручная проверка:** `rustinpy show SuffixAutomaton`, `rustinpy search palindrome`, `rustinpy export --modules dp,strings --out trd.txt`
+- **Дальше:** этап 4 — `geometry`, `game`, `introductory`, `sorting`
