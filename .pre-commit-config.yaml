@@ -1,0 +1,47 @@
+# Проверки перед коммитом и push (spec-first).
+# После установки: pre-commit install && pre-commit install --hook-type pre-push && pre-commit autoupdate
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: detect-private-key
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1  # совпадает с ruff==0.17.1 в [project.optional-dependencies] dev
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        exclude: ^(\.claude|docs)/
+      - id: ruff-format
+        exclude: ^(\.claude|docs)/
+
+  - repo: local
+    hooks:
+      - id: no-env-files
+        name: запрет коммита .env (используй .env.example)
+        language: fail
+        entry: ".env-файлы нельзя коммитить — секреты только в локальном .env"
+        files: '(^|/)\.env(\..+)?$'
+        exclude: '\.env\.example$'
+
+      - id: no-secrets
+        name: поиск токенов PyPI, Telegram-ботов и API-ключей
+        language: pygrep
+        entry: '(\bpypi-[A-Za-z0-9_-]{40,}|\b\d{8,10}:[A-Za-z0-9_-]{33,40}\b|\bsk-(ant-)?[A-Za-z0-9_-]{20,}|\bAKIA[0-9A-Z]{16}\b)'
+        exclude: '(\.env\.example|\.pre-commit-config\.yaml)$'
+
+      - id: tests-before-push
+        name: все тесты перед push
+        language: system
+        entry: '.venv\Scripts\python.exe -m pytest -q'
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rustinpy"
+dynamic = ["version"]
+description = "ICPC / CSES algorithms cheat sheet: self-contained, tested, copy-paste ready Python implementations"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Mirahmad" }]
+keywords = ["icpc", "cses", "competitive-programming", "algorithms", "cheat-sheet", "trd"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7", "pytest-cov"]
+dev = [
+    "pytest>=7",
+    "pytest-cov",
+    "ruff==0.17.1",
+    "mypy==2.4.0",
+    "build",
+    "twine",
+    "pre-commit",
+]
+
+[project.scripts]
+rustinpy = "rustinpy.cli:main"
+
+[tool.hatch.version]
+path = "src/rustinpy/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rustinpy"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "docs", "scripts", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.toml"]
+exclude = ["docs/handoff", "docs/history"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src/rustinpy"]
+addopts = "-q --strict-markers --doctest-modules -m \"not slow\""
+markers = ["slow: performance benchmarks (run with -m slow)"]
+doctest_optionflags = ["NORMALIZE_WHITESPACE"]
+
+[tool.coverage.run]
+branch = true
+source = ["rustinpy"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = [".claude", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "RUF", "C4"]
+# RUF001-003: кириллица в комментариях считается «похожими символами» — это норма для проекта.
+# E741: короткие имена l, I, O привычны в олимпиадном коде.
+ignore = ["RUF001", "RUF002", "RUF003", "E741"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+
+[tool.mypy]
+# mypy 2.x не поддерживает цель 3.9; совместимость с 3.9 проверяют тесты на 3.9 (D-003)
+python_version = "3.10"
+strict = true
+files = ["src/rustinpy"]

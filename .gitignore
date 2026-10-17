@@ -1,0 +1,36 @@
+# --- окружение и секреты ---
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- данные, логи, медиа ---
+*.sqlite3
+*.db
+logs/
+*.log
+media/
+backups/
+
+# --- IDE и ОС ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Claude Code: локальные настройки пользователя ---
+.claude/settings.local.json

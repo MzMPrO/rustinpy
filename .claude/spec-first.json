@@ -1,0 +1,9 @@
+{
+  "test_command": ".venv\\Scripts\\python.exe -m pytest -q",
+  "lint_command": ".venv\\Scripts\\python.exe -m ruff check . --extend-exclude .claude",
+  "check_ac_in_tests": true,
+  "tests_dirs": [
+    "tests"
+  ],
+  "test_timeout_sec": 600
+}

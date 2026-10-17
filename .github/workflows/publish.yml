@@ -1,0 +1,77 @@
+# Публикация через PyPI Trusted Publishing (OIDC): токены в репозитории не нужны.
+# - Ручной запуск (Actions -> Publish -> Run workflow) публикует на TestPyPI.
+# - Тег v* (например v0.1.0) публикует на PyPI.
+# Настройка Trusted Publisher на pypi.org / test.pypi.org описана в docs/PUBLISHING.md.
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Тесты перед сборкой
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test]"
+          pytest
+      - name: Сборка
+        run: |
+          pip install build twine
+          python -m build
+          twine check --strict dist/*
+      - name: Версия тега совпадает с __version__
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          python - <<'EOF'
+          import os, re, pathlib
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
+          src = pathlib.Path("src/rustinpy/__init__.py").read_text(encoding="utf-8")
+          ver = re.search(r'__version__ = "([^"]+)"', src).group(1)
+          assert tag == ver, f"tag v{tag} != __version__ {ver}"
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  testpypi:
+    if: github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/rustinpy
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  pypi:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/rustinpy
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
