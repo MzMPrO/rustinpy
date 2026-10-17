@@ -140,3 +140,12 @@
 - **Проблемы / долги:** `two_stacks_sorting` O(n²) (для n = 2·10⁵ нужен граф конфликтов на дереве отрезков); `roman_split_min_max` считает части, а по разбору 2025 G нужны суммы; `project.urls` и абсолютные ссылки README ждут ник GitHub (Q-4); CI ещё ни разу не запускался. Нарушение процесса: в этом этапе я правил код Python-скриптами через Bash, хотя CLAUDE.md требует Edit/Write. Хук пропускал такие записи, пока не сработал на docs/SPEC.md; дальше всё делалось через Edit/Write
 - **Ручная проверка:** README на GitHub и PyPI; `python scripts/export_trd.py --modules graph,tree --out trd.txt --docstrings none` → распечатать страницу и проверить читаемость; таблица NOT VERIFIED выше (36 + 19 заглушек); шаги docs/PUBLISHING.md
 - **Дальше:** этап 6 — ник GitHub → `[project.urls]`, push, CI (AC-18) → TestPyPI по docs/PUBLISHING.md и проверка установки (AC-19). На PyPI только по команде пользователя
+
+## 2026-10-17 · Публикация 0.1.0 на PyPI
+- **Задание:** команды пользователя в чате: репозиторий https://github.com/MzMPrO/rustinpy; «используй вариант с токеном», «сам его upload сделай»
+- **Сделано:** `[project.urls]` и абсолютные ссылки в README; исправлен pre-push хук (путь к `.venv\Scripts\python.exe` терялся в shlex); push `main`; CHANGELOG `[0.1.0] - 2026-10-17`; `python -m build` + `twine check --strict` → `twine upload` на pypi.org: https://pypi.org/project/rustinpy/0.1.0/
+- **Токен:** пользователь сам положил `PYPI_API_TOKEN` в `.env`. Файл в `.gitignore` и не отслеживается git. Скрипт загрузки прочитал токен оттуда и нигде его не вывел. Токен, присланный раньше в чат, нужно считать скомпрометированным и отозвать
+- **Тесты:** установка `rustinpy==0.1.0` с PyPI в чистый venv (3.11): `rustinpy --version`, импорт, `dijkstra`, 449 алгоритмов, нет runtime-зависимостей ✅
+- **Проблемы / долги:** TestPyPI пропущен по выбору пользователя, AC-19 (TestPyPI) не закрыт, вместо него проверена установка с PyPI; первый CI на GitHub — результат не проверен (AC-18); тег `v0.1.0` не ставился: `publish.yml` по тегу запустит Trusted Publishing, который не настроен, и упадёт (а 0.1.0 уже загружен)
+- **Ручная проверка:** страница https://pypi.org/project/rustinpy/ (README, ссылки); отозвать засвеченный токен, заменить на токен с областью `rustinpy` или настроить Trusted Publisher; удалить токен из `.env`, когда он не нужен
+- **Дальше:** результат CI (AC-18); решение по тегу `v0.1.0` и по `publish.yml` (Trusted Publishing или секрет `PYPI_API_TOKEN` в GitHub)
