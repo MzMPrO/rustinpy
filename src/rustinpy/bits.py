@@ -648,7 +648,7 @@ def kenobi_skywalker(a: list[int], queries: list[tuple[int, int]]) -> list[bool]
     When to use:  ICPC-UZ 2025 K as described by the official tutorial; small values (<= 511).
     Complexity:   O(D^2 * M + q log D), D = distinct values, M = 2^bits of max(a)
     Returns:      answers for queries (c, x).
-    Python speed: D = M = 512 (1.3 * 10^8 steps) is far too slow in CPython; fine for D ~ 60.
+    Python speed: D = M = 512 ~ 17 s in CPython; D = 60, M = 64 ~ 0.03 s.
     Idea:         adding two more copies of a value keeps the xor. Let U = values taken an odd
                   number of times, u = |U|: sizes u, u + 2, ..., up to
                   dp[x][u] = max sum of odd(cnt) over U + even(cnt) over the rest are all

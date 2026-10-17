@@ -313,7 +313,6 @@ def raab_game_count(n: int, a: int, b: int, mod: int = MOD7) -> int:
     When to use:  count pairs of card orders.
     Complexity:   O(n^2)
     Returns:      the count mod mod.
-    Python speed: n = 5000 ~ 10 s in CPython (O(n^2) table rows).
     Idea:         fix player 1's order as 1..n (multiply by n! at the end). Player 2's order
                   is a permutation with t = n - a - b fixed points, b excedances and a
                   deficiencies; removing fixed points keeps the comparisons, so the count is
@@ -356,7 +355,7 @@ def functional_graph_distribution(n: int, mod: int = MOD7) -> list[int]:
     When to use:  distribution of components (= cycles) of random maps.
     Complexity:   O(n^2)
     Returns:      res[k - 1] for k = 1..n, mod mod.
-    Python speed: n = 5000 ~ 10 s in CPython.
+    Python speed: n = 5000 ~ 3 s in CPython (n = 2000 ~ 0.5 s).
     Idea:         choose j cyclic vertices (C(n, j)), arrange them into k cycles (unsigned
                   Stirling numbers of the first kind s(j, k)), hang the rest as a forest with
                   j given roots (j * n^(n-j-1) ways, 1 if j = n).
@@ -392,7 +391,6 @@ def empty_string(s: str, mod: int = MOD7) -> int:
     When to use:  interval DP with interleaving of independent parts.
     Complexity:   O(n^3)
     Returns:      the number of removal orders mod mod (prime).
-    Python speed: n = 500 ~ 5 s in CPython (n^3 / 8 inner steps).
     Idea:         f(l, r) for s[l:r]: s[l] is removed together with some s[m] = s[l]; the inside
                   s[l+1:m] is erased first, the rest s[m+1:r] independently; the two streams of
                   operations interleave in C((r - l) / 2, (r - m - 1) / 2) ways.
@@ -465,7 +463,7 @@ def tournament_graph_distribution(n: int, mod: int = MOD7) -> list[int]:
     When to use:  the condensation of a tournament is a transitive order (a path).
     Complexity:   O(n^3)
     Returns:      res[k - 1] for k = 1..n, mod mod.
-    Python speed: n = 500 ~ 10 s in CPython.
+    Python speed: n = 500 ~ 3 s in CPython (n = 200 ~ 0.2 s).
     Idea:         strong tournaments t(m) = 2^C(m,2) - sum_{i<m} C(m, i) t(i) 2^C(m-i,2)
                   (i = size of the top component); then g[m][k] = sum_i C(m, i) t(i) g[m-i][k-1].
                   NOT VERIFIED: statement reconstructed from memory, checked by brute force.
@@ -753,7 +751,7 @@ def coding_company(skills: list[int], x: int, mod: int = MOD7) -> int:
     When to use:  "open groups" DP: sort, pay gaps for every open team.
     Complexity:   O(n^2 * x)
     Returns:      the number of partitions mod mod.
-    Python speed: n = 100, x = 5000 ~ 10 s in CPython (n^2 x / 2 list updates).
+    Python speed: n = 100, x = 5000 ~ 4 s in CPython.
     Idea:         after sorting, the penalty of a team = sum of gaps it spans; going from s_{i-1}
                   to s_i adds j * gap for j open teams. Element i: own team, open a team,
                   join an open team (j ways) and keep it open or close it.
@@ -794,7 +792,7 @@ def two_stacks_sorting(a: list[int]) -> list[int] | None:
     When to use:  a is a permutation of 1..n; push in order, pop greedily 1, 2, ..., n.
     Complexity:   O(n^2)
     Returns:      stack labels (1 / 2) per element or None if impossible.
-    Python speed: O(n^2) conflicts: fine up to n ~ 3000; CSES n = 2 * 10^5 needs the
+    Python speed: O(n^2) conflicts: n = 3000 ~ 0.3 s; CSES n = 2 * 10^5 needs the
                   segment-tree version of the conflict graph.
     Idea:         i < j conflict (cannot share a stack) iff a_i < a_j and some k > j has
                   a_k < a_i. Sortable iff the conflict graph is bipartite (Even-Itai); any
@@ -907,7 +905,6 @@ def binary_subsequences(n: int) -> str:
     When to use:  Euclid / Stern-Brocot walk; n >= 1.
     Complexity:   O(n log n)
     Returns:      one shortest string.
-    Python speed: n = 10^6 ~ 2 s in CPython.
     Idea:         with X = 1 + #subsequences ending in 0 and Y = 1 + #ending in 1, appending 0
                   maps (X, Y) -> (X + Y, Y), appending 1 maps (X, Y) -> (X, X + Y); start (1, 1),
                   total = X + Y - 2. Try every coprime X + Y = n + 2, length = sum of Euclid
@@ -1138,7 +1135,6 @@ def grid_puzzle_ii(
     When to use:  max-weight b-matching on a dense bipartite graph (n <= ~50).
     Complexity:   O(F * V * E), F = sum(a) augmentations of Bellman-Ford (SPFA)
     Returns:      (best total, rows of 'X' / '.') or None if the sums cannot be met.
-    Python speed: n = 50 (F = 2500) ~ 10 s in CPython.
     Idea:         min-cost flow source -> row i (cap a_i) -> column j (cap 1, cost -value)
                   -> sink (cap b_j); successive shortest paths with SPFA.
                   NOT VERIFIED: statement reconstructed from memory, checked by brute force.

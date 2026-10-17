@@ -31,11 +31,11 @@
 ## 4. Функциональные требования
 
 ### Обязательно (0.1.0)
-- [ ] Модули из раздела 4.3 с функциями и сигнатурами из него.
-- [ ] Реестр `@algo`, функции `show`, `search`, `list_algos`, `help`.
-- [ ] CLI `rustinpy list | show | search | export`.
-- [ ] `scripts/gen_catalog.py` → `docs/CATALOG.md`; `scripts/export_trd.py` (обёртка над `export`).
-- [ ] Тесты, brute-force сравнения, slow-бенчмарки, CI, publish-workflow, README RU+EN, CHANGELOG.
+- [x] Модули из раздела 4.3 с функциями и сигнатурами из него.
+- [x] Реестр `@algo`, функции `show`, `search`, `list_algos`, `help`.
+- [x] CLI `rustinpy list | show | search | export`.
+- [x] `scripts/gen_catalog.py` → `docs/CATALOG.md`; `scripts/export_trd.py` (обёртка над `export`).
+- [x] Тесты, brute-force сравнения, slow-бенчмарки, CI, publish-workflow, README RU+EN, CHANGELOG.
 
 ### Желательно (после 0.1.0)
 - Покрытие оставшихся задач CSES, которые не перечислены в разделе 4.3 (Forbidden Cities, Visiting Cities, Network Breakdown, Increasing Array Queries и т.п.).
@@ -763,25 +763,25 @@ rustin/                         # корень репозитория (папк�
 ## 14. Критерии готовности
 
 - [x] AC-01: `pip install .` в чистом venv проходит, `import rustinpy` работает, у пакета нет runtime-зависимостей
-- [ ] AC-02: каждый алгоритм из раздела 4.3 зарегистрирован через `@algo` либо помечен `verified=False` / `stub=True` с причиной
-- [ ] AC-03: докстринг каждого алгоритма соответствует шаблону 4.1 (обязательные поля, порядок)
-- [ ] AC-04: `pytest --doctest-modules src` проходит, doctest есть у каждого алгоритма
-- [ ] AC-05: у каждого алгоритма есть хотя бы один тест в `tests/`
-- [ ] AC-06: нетривиальные алгоритмы из списка раздела 13 проверены brute-force на случайных данных
-- [ ] AC-07: выгруженный исходник каждого алгоритма (с requires) проходит свой doctest без пакета `rustinpy`
-- [ ] AC-08: в коде алгоритмов нет рекурсии, кроме whitelist с глубиной O(log n)
-- [ ] AC-09: `rustinpy list/show/search/export` и `rustinpy.show/search/list_algos/help` работают по разделу 4.2, включая неоднозначные и неизвестные имена
-- [ ] AC-10: `export` создаёт файл с оглавлением, без `@algo` и импортов `rustinpy`, строки ≤ 100 символов
-- [ ] AC-11: `docs/CATALOG.md` сгенерирован и совпадает с выводом `scripts/gen_catalog.py`
+- [x] AC-02: каждый алгоритм из раздела 4.3 зарегистрирован через `@algo` либо помечен `verified=False` / `stub=True` с причиной
+- [x] AC-03: докстринг каждого алгоритма соответствует шаблону 4.1 (обязательные поля, порядок)
+- [x] AC-04: `pytest --doctest-modules src` проходит, doctest есть у каждого алгоритма
+- [x] AC-05: у каждого алгоритма есть хотя бы один тест в `tests/`
+- [x] AC-06: нетривиальные алгоритмы из списка раздела 13 проверены brute-force на случайных данных
+- [x] AC-07: выгруженный исходник каждого алгоритма (с requires) проходит свой doctest без пакета `rustinpy`
+- [x] AC-08: в коде алгоритмов нет рекурсии, кроме whitelist с глубиной O(log n)
+- [x] AC-09: `rustinpy list/show/search/export` и `rustinpy.show/search/list_algos/help` работают по разделу 4.2, включая неоднозначные и неизвестные имена
+- [x] AC-10: `export` создаёт файл с оглавлением, без `@algo` и импортов `rustinpy`, строки ≤ 100 символов
+- [x] AC-11: `docs/CATALOG.md` сгенерирован и совпадает с выводом `scripts/gen_catalog.py`
 - [x] AC-12: `FastReader`/`FastWriter` и `make_ask` корректно работают на подменённых потоках (включая `-1` и EOF)
-- [ ] AC-13: каждый `NOT VERIFIED` в коде перечислен в `docs/PROGRESS.md`
-- [ ] AC-14: `ruff check`, `ruff format --check` и `mypy --strict` чистые
-- [ ] AC-15: slow-бенчмарки из раздела 7 укладываются в ориентир или у алгоритма есть `Python speed:`
-- [ ] AC-16: README содержит RU и EN разделы: установка, быстрый старт, модули, CLI, TRD, ограничения, лицензия
-- [ ] AC-17: `python -m build` и `twine check dist/*` проходят
+- [x] AC-13: каждый `NOT VERIFIED` в коде перечислен в `docs/PROGRESS.md`
+- [x] AC-14: `ruff check`, `ruff format --check` и `mypy --strict` чистые
+- [x] AC-15: slow-бенчмарки из раздела 7 укладываются в ориентир или у алгоритма есть `Python speed:`
+- [x] AC-16: README содержит RU и EN разделы: установка, быстрый старт, модули, CLI, TRD, ограничения, лицензия
+- [x] AC-17: `python -m build` и `twine check dist/*` проходят
 - [ ] AC-18 (ручная): CI на GitHub зелёный на 3.9–3.13
 - [ ] AC-19 (ручная): пакет установлен из TestPyPI в чистое окружение, тесты проходят
-- [ ] AC-20 (ручная): чек-лист публикации выдан, на PyPI ничего не опубликовано без команды пользователя
+- [x] AC-20 (ручная): чек-лист публикации выдан, на PyPI ничего не опубликовано без команды пользователя
 
 ## 15. План реализации
 
@@ -789,7 +789,7 @@ rustin/                         # корень репозитория (папк�
 - [x] **Этап 2 — graph, tree** → результат: модули с brute-force тестами · AC: AC-03…AC-08 для этих модулей
 - [x] **Этап 3 — dp, strings, roman, bits** → результат: то же · AC: то же
 - [x] **Этап 4 — geometry, game, introductory, sorting** → результат: то же
-- [ ] **Этап 5 — counting, misc, README, CATALOG, export_trd, PUBLISHING** → результат: все AC автоматизированы и зелёные, сборка и `twine check` проходят, чек-лист публикации готов · AC: AC-02, AC-10, AC-11, AC-13, AC-15, AC-16, AC-17, AC-20
+- [x] **Этап 5 — counting, misc, README, CATALOG, export_trd, PUBLISHING** → результат: все AC автоматизированы и зелёные, сборка и `twine check` проходят, чек-лист публикации готов · AC: AC-02, AC-10, AC-11, AC-13, AC-15, AC-16, AC-17, AC-20
 - [ ] **Этап 6 — TestPyPI (с пользователем):** пользователь настраивает Trusted Publisher, запускает `workflow_dispatch`, я ставлю пакет из TestPyPI и гоняю тесты · AC: AC-18, AC-19
 
 ## История изменений

@@ -245,6 +245,55 @@ def test_ac_15_geometry_sorting_speed() -> None:
 
 
 @pytest.mark.slow
+def test_ac_15_counting_speed() -> None:
+    from rustinpy.counting import (
+        binary_subsequences,
+        coding_company,
+        counting_reorders,
+        cyclic_array,
+        empty_string,
+        functional_graph_distribution,
+        maximum_building_counts,
+        raab_game_count,
+    )
+
+    rng = random.Random(6)
+    grid = ["".join(rng.choice("....*") for _ in range(1000)) for _ in range(1000)]
+    run_all(
+        [
+            ("binary_subsequences n = 1e6", 0.35, lambda: binary_subsequences(10**6)),
+            (
+                "cyclic_array n = 2e5",
+                0.8,
+                lambda: cyclic_array([rng.randint(1, 10**9) for _ in range(N)], 10**10),
+            ),
+            (
+                "counting_reorders n = 5000, 10 letters",
+                1.2,
+                lambda: counting_reorders("".join(rng.choice("abcdefghij") for _ in range(5000))),
+            ),
+            (
+                "empty_string n = 500",
+                1.2,
+                lambda: empty_string("".join(rng.choice("ab") for _ in range(500))),
+            ),
+            ("raab_game_count n = 5000", 1.5, lambda: raab_game_count(5000, 2000, 2000)),
+            (
+                "functional_graph_distribution n = 5000",
+                3.1,
+                lambda: functional_graph_distribution(5000),
+            ),
+            ("maximum_building_counts 1000 x 1000", 1.2, lambda: maximum_building_counts(grid)),
+            (
+                "coding_company n = 100, x = 5000",
+                4.3,
+                lambda: coding_company([rng.randint(1, 100) for _ in range(100)], 5000),
+            ),
+        ]
+    )
+
+
+@pytest.mark.slow
 def test_ac_15_mathx_speed() -> None:
     rng = random.Random(2)
     a = [rng.randrange(998244353) for _ in range(N)]
