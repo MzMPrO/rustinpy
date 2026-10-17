@@ -52,7 +52,13 @@ from rustinpy.mathx.numtheory import (
     sum_of_divisors_sum,
     sum_of_four_squares,
 )
-from rustinpy.mathx.poly import convolution, convolution_int, fft_convolution_float, ntt
+from rustinpy.mathx.poly import (
+    convolution,
+    convolution_int,
+    convolution_ntt,
+    fft_convolution_float,
+    ntt,
+)
 from rustinpy.mathx.primes import (
     factorize,
     factorize_spf,
@@ -86,6 +92,7 @@ __all__ = [
     "common_divisors_max_gcd",
     "convolution",
     "convolution_int",
+    "convolution_ntt",
     "coprime_pairs_count",
     "coprime_pairs_up_to",
     "count_fib_representations",

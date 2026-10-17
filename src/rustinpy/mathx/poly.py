@@ -1,4 +1,4 @@
-"""Polynomial multiplication: NTT, big-int packing, complex FFT.
+"""Polynomial multiplication: decimal packing (fastest in CPython), NTT, complex FFT.
 
 Умножение многочленов (свёртка).
 """
@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import cmath
+import decimal
 
 from rustinpy._registry import algo
 
@@ -18,13 +19,13 @@ MOD = 998244353
 def ntt(a: list[int], invert: bool, mod: int = MOD) -> None:
     """In-place number theoretic transform (iterative).   # Быстрое преобразование (NTT).
 
-    When to use:  building block of convolution modulo an NTT prime.
+    When to use:  building block of convolution_ntt; template to port to C++ / PyPy.
     Complexity:   O(n log n), len(a) must be a power of two
     Input:        mod = c * 2^k + 1 with primitive root 3: 998244353, 469762049, 167772161.
     Returns:      None; a is replaced by its transform (inverse transform if invert).
-    Pitfalls:     10^9 + 7 is NOT an NTT prime -> use convolution_int (exact) instead.
-    Python speed: n = 2^18 about 1.5 s; for exact integer products convolution_int is faster.
-    Related:      convolution, convolution_int, fft_convolution_float.
+    Pitfalls:     10^9 + 7 is NOT an NTT prime -> use convolution (any modulus).
+    Python speed: n = 2^18 ~ 1.5-2 s per transform; in CPython convolution() is ~8x faster.
+    Related:      convolution_ntt, convolution, fft_convolution_float.
     CSES:         - (convolution modulo 998244353)
     Example:
         >>> a = [1, 2, 3, 0]
@@ -66,17 +67,17 @@ def ntt(a: list[int], invert: bool, mod: int = MOD) -> None:
     cses=["- (polynomial product)"],
     requires=["MOD", "ntt"],
 )
-def convolution(a: list[int], b: list[int], mod: int = MOD) -> list[int]:
-    """c[k] = sum a[i] * b[k - i] modulo an NTT prime.   # Свёртка по модулю.
+def convolution_ntt(a: list[int], b: list[int], mod: int = MOD) -> list[int]:
+    """c[k] = sum a[i] * b[k - i] modulo an NTT prime, via ntt().   # Свёртка через NTT.
 
-    When to use:  polynomial multiplication, counting sums of pairs, modulo 998244353.
+    When to use:  the classic NTT convolution (to port to C++ / run under PyPy).
     Complexity:   O((n + m) log(n + m)); naive for short inputs
     Returns:      list of length len(a) + len(b) - 1 ([] if one is empty).
-    Python speed: 2 * 10^5 terms ~ 3 s in CPython; convolution_int then % mod is often faster.
-    Related:      ntt, convolution_int, bits.xor_convolution.
+    Python speed: 2 * 10^5 terms ~ 14 s in CPython -> use convolution() (decimal, ~2 s).
+    Related:      ntt, convolution, convolution_int.
     CSES:         - (polynomial product)
     Example:
-        >>> convolution([1, 2, 3], [4, 5])
+        >>> convolution_ntt([1, 2, 3], [4, 5])
         [4, 13, 22, 15]
     """
     if not a or not b:
@@ -101,16 +102,19 @@ def convolution(a: list[int], b: list[int], mod: int = MOD) -> list[int]:
     return fc[:n_res]
 
 
-@algo(tags=["convolution", "big-int", "polynomial"], cses=["- (exact convolution)"])
+@algo(tags=["convolution", "decimal", "polynomial"], cses=["- (exact convolution)"])
 def convolution_int(a: list[int], b: list[int]) -> list[int]:
-    """Exact convolution of NON-NEGATIVE ints via one big-int product.   # Свёртка через big int.
+    """Exact convolution of NON-NEGATIVE ints via one decimal product.   # Точная свёртка.
 
-    When to use:  exact products / any modulus (take % mod after); often the fastest
-                  convolution in CPython because big-int multiply is done in C.
-    Complexity:   one multiplication of numbers with (n + m) * w bits
+    When to use:  exact polynomial products in CPython; the fastest pure-Python way.
+    Complexity:   O(N log N) inside libmpdec (it multiplies huge numbers with an NTT in C)
     Returns:      exact c of length len(a) + len(b) - 1.
     Pitfalls:     negative numbers are not supported - shift them first.   # только >= 0
-    Related:      convolution, fft_convolution_float.
+    Python speed: 2 * 10^5 x 2 * 10^5 values < 10^9: ~2 s (pure NTT 14 s, big int 16 s).
+    Idea:         write a and b as decimal strings with w digits per coefficient
+                  (w > digits of the largest result cell), multiply two Decimals with
+                  precision MAX_PREC, cut the product back into w-digit cells.
+    Related:      convolution (mod), convolution_ntt, fft_convolution_float.
     CSES:         - (exact convolution)
     Example:
         >>> convolution_int([1, 2, 3], [4, 5])
@@ -121,12 +125,48 @@ def convolution_int(a: list[int], b: list[int]) -> list[int]:
     if not a or not b:
         return []
     bound = max(a) * max(b) * min(len(a), len(b))  # максимум одной ячейки
-    nbytes = max(1, (bound.bit_length() + 8) // 8)
-    A = int.from_bytes(b"".join(x.to_bytes(nbytes, "little") for x in a), "little")
-    B = int.from_bytes(b"".join(x.to_bytes(nbytes, "little") for x in b), "little")
+    w = len(str(bound)) + 1  # десятичных цифр на коэффициент
+    fmt = f"0{w}d"
+    A = decimal.Decimal("".join(format(x, fmt) for x in reversed(a)))
+    B = decimal.Decimal("".join(format(x, fmt) for x in reversed(b)))
+    ctx = decimal.Context(prec=decimal.MAX_PREC, Emax=decimal.MAX_EMAX)
     n_res = len(a) + len(b) - 1
-    raw = (A * B).to_bytes(n_res * nbytes, "little")  # ячейки не перекрываются
-    return [int.from_bytes(raw[i * nbytes : (i + 1) * nbytes], "little") for i in range(n_res)]
+    s = str(ctx.multiply(A, B)).rjust(n_res * w, "0")  # умножение в C (libmpdec)
+    L = len(s)
+    return [int(s[L - (i + 1) * w : L - i * w]) for i in range(n_res)]  # режем на ячейки
+
+
+@algo(
+    tags=["convolution", "decimal", "polynomial", "modular"],
+    cses=["- (polynomial product modulo any m)"],
+    requires=["MOD", "convolution_int"],
+)
+def convolution(a: list[int], b: list[int], mod: int = MOD) -> list[int]:
+    """c[k] = sum a[i] * b[k - i] modulo ANY modulus.   # Свёртка по модулю.
+
+    When to use:  polynomial multiplication, counting sums of pairs, any mod (10^9 + 7 too).
+    Complexity:   one exact convolution of values < mod, then % mod
+    Returns:      list of length len(a) + len(b) - 1 ([] if one is empty).
+    Python speed: 2 * 10^5 x 2 * 10^5 ~ 2 s in CPython.
+    Related:      convolution_int, convolution_ntt, bits.xor_convolution.
+    CSES:         - (polynomial product modulo any m)
+    Example:
+        >>> convolution([1, 2, 3], [4, 5])
+        [4, 13, 22, 15]
+        >>> convolution([10**9, 1], [10**9, 1], 10**9 + 7)
+        [49, 999999993, 1]
+    """
+    if not a or not b:
+        return []
+    if min(len(a), len(b)) <= 32:  # короткие - наивно быстрее
+        res = [0] * (len(a) + len(b) - 1)
+        for i, x in enumerate(a):
+            if x:
+                for j, y in enumerate(b):
+                    res[i + j] += x * y
+        return [x % mod for x in res]
+    exact = convolution_int([x % mod for x in a], [x % mod for x in b])
+    return [x % mod for x in exact]
 
 
 @algo(tags=["fft", "convolution", "polynomial", "float"], cses=["- (real-valued convolution)"])

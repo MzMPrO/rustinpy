@@ -19,6 +19,7 @@ from rustinpy.mathx import (
     common_divisors_max_gcd,
     convolution,
     convolution_int,
+    convolution_ntt,
     coprime_pairs_count,
     coprime_pairs_up_to,
     count_fib_representations,
@@ -452,6 +453,8 @@ def test_convolutions_vs_naive(rng: random.Random) -> None:
         b = [rng.randint(0, 10**9) for _ in range(rng.randint(0, 80))]
         exp = naive_conv(a, b)
         assert convolution(a, b) == [x % Q for x in exp]
+        assert convolution_ntt(a, b) == [x % Q for x in exp]
+        assert convolution(a, b, P) == [x % P for x in exp]  # не NTT-модуль
         assert convolution_int(a, b) == exp
         fa = [rng.random() for _ in range(len(a))]
         fb = [rng.random() for _ in range(len(b))]
