@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-17
+
 ### Added
 - Каркас пакета: реестр `@algo`, `show` / `search` / `list_algos` / `help`, CLI `rustinpy list|show|search|export`.
 - `rustinpy.io`, `rustinpy.interactive`, `rustinpy.mathx`, `rustinpy.ds` (140 алгоритмов).
