@@ -814,24 +814,55 @@ def coplanar_with_origin(points: list[tuple[int, int, int]]) -> bool:
     return all(det3(a, b, p) == 0 for p in nz)
 
 
-@algo(tags=["geometry", "3d", "brute-force"], icpc=["2025 D"], verified=False, stub=True)
-def death_star_min_changes(points: list[tuple[int, int, int]]) -> int:
-    """ICPC-UZ 2025 D "Death Star N": fewest distorted coordinates.   # Заглушка.
+@algo(
+    tags=["geometry", "3d", "determinant", "bitmask"],
+    icpc=["2025 D"],
+    requires=["det3"],
+    verified=False,
+)
+def death_star_min_changes(points: list[tuple[int, int, int]]) -> tuple[int, int] | None:
+    """Fewest coordinates to raise by [0, 1) so that O, A, B, C are coplanar.   # Звезда смерти.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return the minimal number of coordinates to change.
-    Idea:         try subsets of coordinates to distort; with them free, det == 0 becomes a
-                  polynomial in the free variables - check whether it can vanish.
-                  NOT VERIFIED: statement unknown.
-    ICPC-UZ:      2025 D.
+    When to use:  ICPC-UZ 2025 D as described by the official tutorial.
+    Complexity:   O(2^9) determinants
+    Input:        three integer points A, B, C (the fourth point is the origin).
+    Returns:      (minimal number of changed coordinates, number of such coordinate sets);
+                  (0, 1) if already coplanar; None if impossible.
+    Idea:         det is linear in every coordinate: if some shift in (0, 1)^S flips the
+                  sign, pushing each coordinate to the better end 0 or 1 gives a corner that
+                  flips too. So for the smallest S a root exists iff adding 1 to all of S makes
+                  the sign strictly opposite. Try the 511 sets, count the smallest flipping.
+                  NOT VERIFIED: statement not found (input format, what is "distorted").
+    ICPC-UZ:      2025 D "Death Star N".
     Example:
-        >>> death_star_min_changes([])
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 D: statement not verified yet
+        >>> death_star_min_changes([(1, 0, 0), (0, 1, 0), (0, 0, 1)])
+        (4, 3)
+        >>> death_star_min_changes([(1, 2, 3), (2, 4, 6), (5, 0, 1)])
+        (0, 1)
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 D: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено
+    base = det3(points[0], points[1], points[2])
+    if base == 0:
+        return 0, 1
+    best = 10
+    ways = 0
+    for mask in range(1, 1 << 9):
+        k = bin(mask).count("1")
+        if k > best:
+            continue
+        m = [list(p) for p in points]
+        for b in range(9):
+            if mask >> b & 1:
+                m[b // 3][b % 3] += 1  # координата сдвинута на 1 вместо дроби
+        d = det3(
+            (m[0][0], m[0][1], m[0][2]), (m[1][0], m[1][1], m[1][2]), (m[2][0], m[2][1], m[2][2])
+        )
+        if d != 0 and (d > 0) != (base > 0):
+            if k < best:
+                best = k
+                ways = 0
+            ways += 1
+    return (best, ways) if ways else None
 
 
 @algo(tags=["geometry", "tsp", "bitmask-dp"], icpc=["2023 K"], verified=False)

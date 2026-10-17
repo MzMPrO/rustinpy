@@ -1,6 +1,6 @@
 """ICPC Uzbekistan problems that need number theory or combinatorics.
 
-Задачи ICPC-UZ. Условия ещё не сверены (этап 5), поэтому здесь честные заглушки.
+Задачи ICPC-UZ. Условий нет: заглушки или реализации по разбору жюри 2025 (NOT VERIFIED).
 """
 
 from __future__ import annotations
@@ -10,30 +10,32 @@ from rustinpy._registry import algo
 MOD = 998244353
 
 
-@algo(
-    tags=["combinatorics", "multinomial", "composite-mod"],
-    icpc=["2025 B"],
-    verified=False,
-    stub=True,
-)
+@algo(tags=["combinatorics", "blocks", "composite-mod"], icpc=["2025 B"], verified=False)
 def min_digit_changes_count(counts: list[int], mod: int = 2112025) -> int:
-    """ICPC-UZ 2025 B: count digit strings with the minimum number of digit changes.   # Заглушка.
+    """Arrangements of a multiset with the fewest neighbour changes.   # Мин. число смен цифр.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return the count modulo 2112025.
-    Pitfalls:     2112025 = 5^2 * 84481 is composite: no factorial inverses -> nCr_pascal or
-                  nCr_composite.
-    Idea:         the minimum number of changes is reached when equal digits form blocks;
-                  count block orders / multinomials. NOT VERIFIED: statement not checked yet.
-    ICPC-UZ:      2025 B.
+    When to use:  ICPC-UZ 2025 B as described by the official tutorial.
+    Complexity:   O(len(counts))
+    Input:        counts[d] = how many times symbol d occurs.
+    Returns:      k! mod mod, k = number of distinct symbols (1 for an empty multiset).
+    Pitfalls:     2112025 = 5^2 * 84481 is composite: only multiply, never divide. If the
+                  real statement forbids a leading zero, the answer becomes (k - 1) * (k - 1)!.
+    Idea:         the minimum (k - 1 changes) is reached only when every symbol forms one
+                  block; the blocks can be ordered in k! ways. Checked by brute force.
+                  NOT VERIFIED: statement not found (leading zeros?).
+    ICPC-UZ:      2025 B "Big Alphanumeric String".
     Example:
-        >>> min_digit_changes_count([1, 1])
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 B: statement not verified yet
+        >>> min_digit_changes_count([2, 1, 0, 3]), min_digit_changes_count([5])
+        (6, 1)
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 B: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено (ведущие нули?)
+    res = 1 % mod
+    k = 0
+    for c in counts:
+        if c > 0:
+            k += 1
+            res = res * k % mod  # k! без делений: модуль составной
+    return res
 
 
 @algo(tags=["primes", "subsequence", "digit-dp"], icpc=["2024 D"], verified=False, stub=True)
@@ -59,20 +61,37 @@ def deep_numbers_count(n: int) -> int:
     raise NotImplementedError("ICPC-UZ 2024 D: statement not verified yet")
 
 
-@algo(tags=["dp", "matrix", "games"], icpc=["2025 I"], requires=["MOD"], verified=False, stub=True)
-def infinite_game_count(n: int, mod: int = MOD) -> int:
-    """ICPC-UZ 2025 I "Infinite Game": count games of length n.   # Заглушка.
+@algo(tags=["dp", "matrix", "games"], icpc=["2025 I"], requires=["MOD"], verified=False)
+def infinite_game_count(n: int, rem: int = 0, last: int = 0, mod: int = MOD) -> int:
+    """Number of positions after n moves of the digit game.   # Бесконечная игра.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return the number of games of length n mod mod.
-    Idea:         state = (sum mod 3, last digit) -> a 30 x 30 transition matrix, answer =
-                  vector * M^n (mat_pow). NOT VERIFIED: rules of the game unknown.
-    ICPC-UZ:      2025 I.
+    When to use:  ICPC-UZ 2025 I as described by the official tutorial.
+    Complexity:   O(9^3 log n)
+    Input:        a move appends a digit 0, 1 or 2 that differs from the last digit and does
+                  not make the digit sum divisible by 3; the start state is (sum mod 3, last).
+    Returns:      the number of different move sequences of length n, mod mod.
+    Idea:         9 states (sum mod 3, last digit), a move can always be made (at most two
+                  digits are forbidden), so count paths of length n: 9 x 9 matrix power. The
+                  tutorial also notes a Fibonacci closed form after a short prefix.
+                  NOT VERIFIED: statement not found (start state and output format).
+    ICPC-UZ:      2025 I "Infinite Game".
     Example:
-        >>> infinite_game_count(1)
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 I: statement not verified yet
+        >>> [infinite_game_count(n) for n in range(7)]
+        [1, 2, 2, 2, 4, 6, 10]
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 I: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено
+    m = [[0] * 9 for _ in range(9)]
+    for r in range(3):
+        for d in range(3):
+            for x in range(3):
+                nr = (r + x) % 3
+                if x != d and nr != 0:
+                    m[r * 3 + d][nr * 3 + x] += 1  # ход: дописать цифру x
+    vec = [0] * 9
+    vec[rem % 3 * 3 + last] = 1
+    while n > 0:
+        if n & 1:
+            vec = [sum(vec[i] * m[i][j] for i in range(9)) % mod for j in range(9)]
+        m = [[sum(m[i][t] * m[t][j] for t in range(9)) % mod for j in range(9)] for i in range(9)]
+        n >>= 1
+    return sum(vec) % mod

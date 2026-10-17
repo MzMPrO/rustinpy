@@ -167,6 +167,15 @@ def test_transforms_and_convolutions(rng: random.Random) -> None:
         assert c == a
 
 
-def test_bits_stub_raises() -> None:
-    with pytest.raises(NotImplementedError):
-        kenobi_skywalker([1], [(1, 1)])
+def test_kenobi_skywalker(rng: random.Random) -> None:
+    for _ in range(150):
+        a = [rng.randint(0, 7) for _ in range(rng.randint(0, 8))]
+        can = set()
+        for mask in range(1 << len(a)):
+            x = 0
+            for i in range(len(a)):
+                if mask >> i & 1:
+                    x ^= a[i]
+            can.add((bin(mask).count("1"), x))
+        qs = [(c, x) for c in range(-1, len(a) + 2) for x in range(9)]
+        assert kenobi_skywalker(a, qs) == [q in can for q in qs], a

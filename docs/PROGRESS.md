@@ -35,16 +35,16 @@
 | `mathx.gcd_sum_pairs` | условие ICPC-UZ 2025 C |
 | `mathx.count_fib_representations` | условия ICPC-UZ 2023 H / 2025 J |
 | `mathx.min_trials_for_probability` | условие и требования к точности ICPC-UZ 2023 D |
-| `mathx.min_digit_changes_count` | заглушка: условие ICPC-UZ 2025 B |
+| `mathx.min_digit_changes_count` | ICPC-UZ 2025 B: k! по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; запрещён ли ведущий ноль |
 | `mathx.deep_numbers_count` | заглушка: условие ICPC-UZ 2024 D |
-| `mathx.infinite_game_count` | заглушка: правила игры ICPC-UZ 2025 I |
+| `mathx.infinite_game_count` | ICPC-UZ 2025 I: правила по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; стартовое состояние и вывод |
 | `ds.SegTreeFlipRuns` | ICPC-UZ 2025 H: какая функция от длины серии единиц (сейчас L(L+1)/2) |
 | `ds.isotonic_sse_mod` | ICPC-UZ 2023 L: какие запросы; реализована только подгонка и SSE |
-| `ds.exclusions` | заглушка: определение f(k) в ICPC-UZ 2025 E |
+| `ds.exclusions` | заглушка: определение f(k) в ICPC-UZ 2025 E (разбор жюри есть, но f(k) из него однозначно не следует) |
 | `ds.generic_strings` | заглушка: условие ICPC-UZ 2023 G |
 | `graph.escalators` | заглушка: условие ICPC-UZ 2023 E |
 | `graph.bus_companies` | заглушка: условие CSES Bus Companies не сверено |
-| `tree.fix_the_leak` | заглушка: что такое «агенты» и «цепочки» в ICPC-UZ 2025 F |
+| `tree.fix_the_leak` | ICPC-UZ 2025 F: жадность по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; сверено с перебором |
 | `dp.fence_painting` | ICPC-UZ 2023 F: правило соседей (формулы сверены перебором для «соседи различны») |
 | `strings.inverse_suffix_array` | формат CSES Inverse Suffix Array (алфавит a..z, вывод) |
 | `strings.string_functions` | заглушка: какие функции даёт CSES String Functions |
@@ -52,17 +52,34 @@
 | `strings.apostrophe_number` | заглушка: правило ICPC-UZ 2024 K |
 | `roman.roman_symmetry` | заглушка: условие ICPC-UZ 2023 C |
 | `roman.roman_product_unique` | заглушка: условие ICPC-UZ 2024 E |
-| `roman.roman_split_min_max` | ICPC-UZ 2025 G: что минимизируется / максимизируется |
-| `roman.scroogius_shortest` | заглушка: вторая часть ICPC-UZ 2025 G |
+| `roman.roman_split_min_max` | ICPC-UZ 2025 G: считает число частей, а по разбору жюри сравниваются суммы (см. `scroogius_shortest`) |
+| `roman.scroogius_shortest` | ICPC-UZ 2025 G: формула по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; сверено с перебором строк длины ≤ 5 |
 | `bits.k_subset_xors` | CSES K Subset Xors: с кратностями или без |
 | `bits.all_subarray_xors` | формат CSES All Subarray Xors |
-| `bits.kenobi_skywalker` | заглушка: ограничения ICPC-UZ 2025 K |
+| `bits.kenobi_skywalker` | ICPC-UZ 2025 K: DP по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; ограничения, пустое подмножество |
 | `geometry.robot_path` | CSES Robot Path: условие не сверено; решение O(n^2) (сверено с пошаговой симуляцией) |
 | `geometry.line_segments_trace` | заглушка: условие CSES Line Segments Trace |
-| `geometry.death_star_min_changes` | заглушка: условие ICPC-UZ 2025 D |
+| `geometry.death_star_min_changes` | ICPC-UZ 2025 D: по разбор жюри 2025 (neerc.ifmo.ru/archive/2025/uzbekistan/uzb-tutorial-en.pdf), условия нет; формат ввода (3 точки + начало координат?) |
 | `geometry.biathlon_route` | ICPC-UZ 2023 K: реализована только базовая версия (TSP по подмножествам) |
 | `introductory.monotone_subsequences` | CSES: «монотонная» — только возрастающая или любая |
 | `introductory.filling_trominos` | заглушка: условие CSES Filling Trominos |
+| `counting.filled_subgrid_count` | CSES Filled Subgrid Count: какая версия (квадраты / прямоугольники), обе реализованы |
+| `counting.grid_completion` | условие CSES Grid Completion восстановлено по памяти (сверено с перебором) |
+| `counting.raab_game_count` | CSES Raab Game II: множитель n! (обе последовательности карт или только вторая) |
+| `counting.functional_graph_distribution` | условие CSES восстановлено по памяти (сверено с перебором) |
+| `counting.tournament_graph_distribution` | условие CSES восстановлено по памяти (сверено с перебором) |
+| `counting.binary_subsequences` | CSES Binary Subsequences: считается ли пустая подпоследовательность |
+| `counting.grid_puzzle_ii` | условие CSES Grid Puzzle II восстановлено по памяти (сверено с перебором) |
+| `misc.attacks_number` | условие ICPC-UZ 2023 A не найдено, реализация по описанию из задания |
+| `misc.a_plus_branding` | заглушка: условие ICPC-UZ 2024 A не найдено |
+| `misc.big_deadline` | заглушка: условие ICPC-UZ 2024 B не найдено |
+| `misc.certainly_best` | заглушка: условие ICPC-UZ 2024 C не найдено |
+| `misc.great_sign` | заглушка: условие ICPC-UZ 2024 G не найдено |
+| `misc.hidden_pieces` | заглушка: условие ICPC-UZ 2024 H не найдено |
+| `misc.laura_and_arrays` | заглушка: условие ICPC-UZ 2024 L не найдено |
+| `misc.a_problems_balloons` | ICPC-UZ 2025 A: min(n, k) по разбору жюри, формат ввода неизвестен |
+| `misc.limit_the_arrow` | ICPC-UZ 2025 L: определение f(i) взято из разбора жюри |
+| `misc.minimum_number_of_tasks` | ICPC-UZ 2025 M: по разбору жюри, формат ввода неизвестен |
 
 ## 2026-10-17 · Проект инициализирован (spec-first)
 - **Сделано:** созданы CLAUDE.md, docs/SPEC.md (ЧЕРНОВИК), DECISIONS.md, PROGRESS.md, команды и хуки

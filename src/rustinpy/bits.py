@@ -641,20 +641,74 @@ def or_convolution(a: list[int], b: list[int]) -> list[int]:
     return fc
 
 
-@algo(tags=["bits", "xor", "dp", "subsets"], icpc=["2025 K"], verified=False, stub=True)
+@algo(tags=["bits", "xor", "dp", "subsets"], icpc=["2025 K"], verified=False)
 def kenobi_skywalker(a: list[int], queries: list[tuple[int, int]]) -> list[bool]:
-    """ICPC-UZ 2025 K "Kenobi and Skywalker": subset of size c with xor x?   # Заглушка.
+    """Is there a sub-multiset of exactly c elements with xor x?   # Кеноби и Скайуокер.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return answers for (c, x) queries.
-    Idea:         values <= 511 -> xor space of 512; dp over (xor, size or size parity) with
-                  bitsets, or FWHT powers. NOT VERIFIED: limits on n, c and q unknown.
-    ICPC-UZ:      2025 K.
+    When to use:  ICPC-UZ 2025 K as described by the official tutorial; small values (<= 511).
+    Complexity:   O(D^2 * M + q log D), D = distinct values, M = 2^bits of max(a)
+    Returns:      answers for queries (c, x).
+    Python speed: D = M = 512 (1.3 * 10^8 steps) is far too slow in CPython; fine for D ~ 60.
+    Idea:         adding two more copies of a value keeps the xor. Let U = values taken an odd
+                  number of times, u = |U|: sizes u, u + 2, ..., up to
+                  dp[x][u] = max sum of odd(cnt) over U + even(cnt) over the rest are all
+                  reachable. dp over values; per (x, parity) merge the segments [u, dp] and
+                  answer by binary search. Checked by brute force.
+                  NOT VERIFIED: statement not found (limits, empty subset allowed?).
+    ICPC-UZ:      2025 K "Kenobi and Skywalker".
     Example:
-        >>> kenobi_skywalker([1], [(1, 1)])
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 K: statement not verified yet
+        >>> kenobi_skywalker([1, 2, 3, 3], [(2, 3), (3, 0), (1, 0), (4, 3)])
+        [True, True, False, True]
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 K: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено
+    cnt: dict[int, int] = {}
+    for v in a:
+        cnt[v] = cnt.get(v, 0) + 1
+    size = 1 << max(1, max(a, default=0).bit_length())
+    d = len(cnt)
+    neg = -1
+    dp = [[neg] * (d + 1) for _ in range(size)]
+    dp[0][0] = 0
+    for v, c in cnt.items():
+        ev = c - c % 2  # наибольшее чётное <= c
+        od = c if c % 2 else c - 1  # наибольшее нечётное <= c
+        new = []
+        for x in range(size):
+            row = dp[x]
+            alt = dp[x ^ v]
+            out = [row[u] + ev if row[u] >= 0 else neg for u in range(d + 1)]
+            for u in range(1, d + 1):
+                if alt[u - 1] >= 0 and alt[u - 1] + od > out[u]:
+                    out[u] = alt[u - 1] + od  # v берём нечётное число раз
+            new.append(out)
+        dp = new
+    segs: dict[tuple[int, int], tuple[list[int], list[int]]] = {}
+    for x in range(size):
+        for par in range(2):
+            starts: list[int] = []
+            ends: list[int] = []
+            for u in range(par, d + 1, 2):
+                e = dp[x][u]
+                if e < 0:
+                    continue
+                if starts and u <= ends[-1] + 2:
+                    ends[-1] = max(ends[-1], e)  # отрезки одной чётности сливаются
+                else:
+                    starts.append(u)
+                    ends.append(e)
+            segs[x, par] = (starts, ends)
+    res = []
+    for c, x in queries:
+        if c < 0 or x >= size:
+            res.append(False)
+            continue
+        starts, ends = segs[x, c % 2]
+        lo, hi = 0, len(starts)
+        while lo < hi:  # последний отрезок с началом <= c
+            mid = (lo + hi) // 2
+            if starts[mid] <= c:
+                lo = mid + 1
+            else:
+                hi = mid
+        res.append(lo > 0 and c <= ends[lo - 1])
+    return res

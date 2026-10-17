@@ -168,20 +168,29 @@ def roman_product_unique(n: int) -> bool:
     raise NotImplementedError("ICPC-UZ 2024 E: statement not verified yet")
 
 
-@algo(tags=["roman", "construction"], icpc=["2025 G"], verified=False, stub=True)
-def scroogius_shortest(n: int) -> str:
-    """ICPC-UZ 2025 G: shortest lexicographically smallest string with difference n.   # Заглушка.
+@algo(tags=["roman", "construction", "greedy"], icpc=["2025 G"], verified=False)
+def scroogius_shortest(n: int) -> str | None:
+    """Shortest, then smallest string whose split sums differ by n.   # Губернатор Скрудж.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return the string.
-    Idea:         difference of max and min splits (roman_split_min_max) equals n; search
-                  by length with BFS over automaton states. NOT VERIFIED: statement unknown.
+    When to use:  ICPC-UZ 2025 G as described by the official tutorial.
+    Complexity:   O(n / 2) output length
+    Returns:      the string over IVXLCDM, None if n is odd (n >= 1).
+    Pitfalls:     here the sums of the numerals are compared, not the number of parts
+                  (roman_split_min_max counts parts).
+    Idea:         the max sum splits into single letters; only "inversions" lower the sum,
+                  each costs 2 letters and gains 2, 20 or 200. So n / 2 = 100 a + 10 b + c
+                  with b, c < 10: a times CD, c times IV, b times XC, in this (ASCII) order.
+                  Checked by brute force over strings of length <= 5. NOT VERIFIED: statement
+                  not found.
     ICPC-UZ:      2025 G "Governor Scroogius".
     Example:
-        >>> scroogius_shortest(1)
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 G: statement not verified yet
+        >>> scroogius_shortest(2), scroogius_shortest(22), scroogius_shortest(3) is None
+        ('IV', 'IVXC', True)
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 G: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено (сверено только с перебором)
+    if n < 1:
+        raise ValueError("n must be positive")
+    if n % 2:
+        return None
+    q = n // 2
+    return "CD" * (q // 100) + "IV" * (q % 10) + "XC" * (q // 10 % 10)

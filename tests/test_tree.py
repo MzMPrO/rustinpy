@@ -5,8 +5,6 @@ from __future__ import annotations
 import itertools
 import random
 
-import pytest
-
 from rustinpy.tree import (
     HLD,
     LCA,
@@ -270,6 +268,16 @@ def test_tree_isomorphism_vs_permutations(rng: random.Random) -> None:
             assert tree_isomorphic(n, a1, a2, rooted) == brute_iso(n, e1, e2, rooted)
 
 
-def test_tree_stub_raises() -> None:
-    with pytest.raises(NotImplementedError):
-        fix_the_leak(1, [-1], 0)
+def test_fix_the_leak(rng: random.Random) -> None:
+    for _ in range(300):
+        n = rng.randint(1, 9)
+        parent = [-1] + [rng.randrange(i) for i in range(1, n)]
+        k = rng.randrange(n)
+        best = n
+        for removed in itertools.combinations(range(1, n), k):
+            rem = set(removed)
+            if any(parent[v] in rem for v in range(1, n) if v not in rem):
+                continue  # остаток должен быть поддеревом с корнем 0
+            has_child = {parent[v] for v in range(1, n) if v not in rem}
+            best = min(best, sum(1 for v in range(n) if v not in rem and v not in has_child))
+        assert fix_the_leak(n, parent, k) == best, (parent, k)

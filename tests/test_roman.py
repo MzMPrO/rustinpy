@@ -57,6 +57,41 @@ def test_split_min_max_vs_brute(rng: random.Random) -> None:
 
 
 def test_roman_stubs_raise() -> None:
-    for f, arg in ((roman_symmetry, "X"), (roman_product_unique, 6), (scroogius_shortest, 1)):
+    for f, arg in ((roman_symmetry, "X"), (roman_product_unique, 6)):
         with pytest.raises(NotImplementedError):
             f(arg)  # type: ignore[operator]
+
+
+def split_sum_range(s: str, valid: dict[str, int]) -> tuple[int, int] | None:
+    """Перебор: минимальная и максимальная сумма разбиения s на римские числа."""
+    n = len(s)
+    lo: list[float] = [float("inf")] * (n + 1)
+    hi: list[float] = [-1.0] * (n + 1)
+    lo[0] = hi[0] = 0
+    for j in range(1, n + 1):
+        for i in range(max(0, j - 15), j):
+            v = valid.get(s[i:j])
+            if v is not None and hi[i] >= 0:
+                lo[j] = min(lo[j], lo[i] + v)
+                hi[j] = max(hi[j], hi[i] + v)
+    return (int(lo[n]), int(hi[n])) if hi[n] >= 0 else None
+
+
+def test_scroogius_shortest() -> None:
+    valid = {to_roman(v): v for v in range(1, 4000)}
+    best: dict[int, str] = {}
+    for length in range(1, 6):
+        for t in itertools.product(sorted("IVXLCDM"), repeat=length):
+            r = split_sum_range("".join(t), valid)
+            if r is not None:
+                best.setdefault(r[1] - r[0], "".join(t))  # первая по длине и алфавиту
+    for n in range(1, 500):
+        got = scroogius_shortest(n)
+        if got is not None and len(got) <= 5:
+            assert best.get(n) == got, n
+        elif n in best:
+            assert got is not None and len(got) <= len(best[n]), n
+    for n in range(1, 4000, 2):
+        assert n not in best
+    with pytest.raises(ValueError):
+        scroogius_shortest(0)

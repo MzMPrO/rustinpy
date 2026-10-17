@@ -294,5 +294,45 @@ def test_biathlon_tsp_vs_permutations(rng: random.Random) -> None:
 def test_geometry_stubs_raise() -> None:
     with pytest.raises(NotImplementedError):
         line_segments_trace([], 1)
-    with pytest.raises(NotImplementedError):
-        death_star_min_changes([])
+
+
+def det_f(m: list[list[float]]) -> float:
+    return (
+        m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+        - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+        + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
+    )
+
+
+def test_death_star_min_changes(rng: random.Random) -> None:
+    for _ in range(40):
+        pts = [tuple(rng.randint(-3, 3) for _ in range(3)) for _ in range(3)]
+        res = death_star_min_changes(pts)  # type: ignore[arg-type]
+        base = det_f([list(map(float, p)) for p in pts])
+        if base == 0:
+            assert res == (0, 1)
+            continue
+
+        def shifted(mask: int, t: float, p: list[tuple[int, ...]] = pts) -> float:
+            m = [list(map(float, q)) for q in p]
+            for b in range(9):
+                if mask >> b & 1:
+                    m[b // 3][b % 3] += t
+            return det_f(m)
+
+        corner = {mask for mask in range(1, 1 << 9) if shifted(mask, 1.0) * base < 0}
+        if not corner:
+            assert res is None
+            continue
+        k = min(bin(mask).count("1") for mask in corner)
+        assert res == (k, sum(1 for mask in corner if bin(mask).count("1") == k))
+        for mask in range(1, 1 << 9):
+            if bin(mask).count("1") > k:
+                continue
+            for _ in range(40):  # внутренние точки куба не дают смены знака без угла
+                m = [list(map(float, q)) for q in pts]
+                for b in range(9):
+                    if mask >> b & 1:
+                        m[b // 3][b % 3] += rng.random() * 0.999
+                if det_f(m) * base < 0:
+                    assert mask in corner, (pts, mask)

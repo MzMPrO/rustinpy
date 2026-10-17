@@ -892,21 +892,43 @@ def tree_isomorphic(
     return any(_canon_ids(n, adj2, c, table) == first for c in c2)
 
 
-@algo(tags=["tree", "greedy", "leaves"], icpc=["2025 F"], verified=False, stub=True)
+@algo(tags=["tree", "greedy", "leaves", "long-path"], icpc=["2025 F"], verified=False)
 def fix_the_leak(n: int, parent: list[int], k: int) -> int:
-    """ICPC-UZ 2025 F "Fix the Leak": remove exactly k agents, minimise leaves.   # Заглушка.
+    """Prune k vertices (leaf by leaf) to leave the fewest leaves.   # Почини утечку.
 
-    When to use:  -
-    Complexity:   -
-    Returns:      would return the minimal number of leaves.
-    Idea:         tree given by parents p_i < i (so vertices are already in topological order:
-                  process i = n-1..1 for bottom-up DP). What an "agent" and a "chain" are is
-                  unknown - NOT VERIFIED until the statement is checked.
-    ICPC-UZ:      2025 F.
+    When to use:  ICPC-UZ 2025 F as described by the official tutorial.
+    Complexity:   O(n log n)
+    Input:        rooted tree, parent[0] = -1, parent[i] < i; 0 <= k < n.
+    Returns:      minimal number of leaves (vertices without children) after removing
+                  k vertices so that the rest stays a rooted subtree.
+    Idea:         long-path decomposition: every vertex continues the chain of its deepest
+                  child, the other chains end there. Removing a whole non-root chain kills
+                  exactly one leaf, so take the shortest chains while their total <= k.
+                  Checked against brute force. NOT VERIFIED: statement not found.
+    ICPC-UZ:      2025 F "Fix The Leak!".
     Example:
-        >>> fix_the_leak(1, [-1], 0)
-        Traceback (most recent call last):
-        NotImplementedError: ICPC-UZ 2025 F: statement not verified yet
+        >>> fix_the_leak(5, [-1, 0, 0, 1, 1], 1), fix_the_leak(5, [-1, 0, 0, 1, 1], 3)
+        (2, 1)
     """
-    # NOT VERIFIED: заглушка до сверки условия (этап 5)
-    raise NotImplementedError("ICPC-UZ 2025 F: statement not verified yet")
+    # NOT VERIFIED: по разбору жюри, условие не найдено (сверено только с перебором)
+    depth = [1] * n  # длина цепочки вниз от вершины
+    chains = []
+    best_child = [0] * n
+    for v in range(n - 1, 0, -1):  # p_i < i: снизу вверх без рекурсии
+        p = parent[v]
+        if depth[v] + 1 > depth[p] or best_child[p] == 0:
+            if best_child[p]:
+                chains.append(depth[p] - 1)  # прежняя глубочайшая цепочка закончилась в p
+            depth[p] = depth[v] + 1
+            best_child[p] = v
+        else:
+            chains.append(depth[v])
+    chains.append(depth[0])  # цепочка корня
+    leaves = len(chains)
+    removed = 0
+    for ln in sorted(chains):
+        if ln > k:
+            break
+        k -= ln
+        removed += 1
+    return leaves - removed

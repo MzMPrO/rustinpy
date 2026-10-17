@@ -568,10 +568,37 @@ def test_min_trials_for_probability_vs_scan() -> None:
 
 
 def test_icpc_stubs_raise() -> None:
-    for f, args in (
-        (min_digit_changes_count, ([1, 1],)),
-        (deep_numbers_count, (10,)),
-        (infinite_game_count, (3,)),
-    ):
-        with pytest.raises(NotImplementedError):
-            f(*args)
+    with pytest.raises(NotImplementedError):
+        deep_numbers_count(10)
+
+
+def test_min_digit_changes_count(rng: random.Random) -> None:
+    for _ in range(60):
+        counts = [rng.randint(0, 3) for _ in range(rng.randint(1, 4))]
+        items = [d for d, c in enumerate(counts) for _ in range(c)]
+        if not items:
+            assert min_digit_changes_count(counts) == 1
+            continue
+        perms = set(itertools.permutations(items))
+        changes = [sum(p[i] != p[i + 1] for i in range(len(p) - 1)) for p in perms]
+        best = min(changes)
+        assert min_digit_changes_count(counts) == changes.count(best) % 2112025
+
+
+def test_infinite_game_count() -> None:
+    for rem in range(3):
+        for last in range(3):
+            for n in range(9):
+                cnt = 0
+                for seq in itertools.product(range(3), repeat=n):
+                    r, d, ok = rem, last, True
+                    for x in seq:
+                        r = (r + x) % 3
+                        if x == d or r == 0:
+                            ok = False
+                            break
+                        d = x
+                    cnt += ok
+                assert infinite_game_count(n, rem, last) == cnt, (n, rem, last)
+    big = infinite_game_count(10**18)
+    assert 0 <= big < 998244353
