@@ -762,7 +762,7 @@ rustin/                         # корень репозитория (папк�
 
 ## 14. Критерии готовности
 
-- [ ] AC-01: `pip install .` в чистом venv проходит, `import rustinpy` работает, у пакета нет runtime-зависимостей
+- [x] AC-01: `pip install .` в чистом venv проходит, `import rustinpy` работает, у пакета нет runtime-зависимостей
 - [ ] AC-02: каждый алгоритм из раздела 4.3 зарегистрирован через `@algo` либо помечен `verified=False` / `stub=True` с причиной
 - [ ] AC-03: докстринг каждого алгоритма соответствует шаблону 4.1 (обязательные поля, порядок)
 - [ ] AC-04: `pytest --doctest-modules src` проходит, doctest есть у каждого алгоритма
@@ -773,7 +773,7 @@ rustin/                         # корень репозитория (папк�
 - [ ] AC-09: `rustinpy list/show/search/export` и `rustinpy.show/search/list_algos/help` работают по разделу 4.2, включая неоднозначные и неизвестные имена
 - [ ] AC-10: `export` создаёт файл с оглавлением, без `@algo` и импортов `rustinpy`, строки ≤ 100 символов
 - [ ] AC-11: `docs/CATALOG.md` сгенерирован и совпадает с выводом `scripts/gen_catalog.py`
-- [ ] AC-12: `FastReader`/`FastWriter` и `make_ask` корректно работают на подменённых потоках (включая `-1` и EOF)
+- [x] AC-12: `FastReader`/`FastWriter` и `make_ask` корректно работают на подменённых потоках (включая `-1` и EOF)
 - [ ] AC-13: каждый `NOT VERIFIED` в коде перечислен в `docs/PROGRESS.md`
 - [ ] AC-14: `ruff check`, `ruff format --check` и `mypy --strict` чистые
 - [ ] AC-15: slow-бенчмарки из раздела 7 укладываются в ориентир или у алгоритма есть `Python speed:`
@@ -785,7 +785,7 @@ rustin/                         # корень репозитория (папк�
 
 ## 15. План реализации
 
-- [ ] **Этап 1 — каркас + mathx + ds:** git, `pyproject.toml`, `.gitignore`, LICENSE, CHANGELOG, `_registry`, `__init__`, `cli`, `io`, `interactive`, CI, publish.yml, мета-тесты, `mathx`, `ds` → результат: `pip install -e .[dev]`, ruff/mypy/pytest зелёные, CLI показывает алгоритмы mathx/ds · AC: AC-01, AC-09, AC-12, AC-14 (частично AC-03…AC-08)
+- [x] **Этап 1 — каркас + mathx + ds:** git, `pyproject.toml`, `.gitignore`, LICENSE, CHANGELOG, `_registry`, `__init__`, `cli`, `io`, `interactive`, CI, publish.yml, мета-тесты, `mathx`, `ds` → результат: `pip install -e .[dev]`, ruff/mypy/pytest зелёные, CLI показывает алгоритмы mathx/ds · AC: AC-01, AC-09, AC-12, AC-14 (частично AC-03…AC-08)
 - [ ] **Этап 2 — graph, tree** → результат: модули с brute-force тестами · AC: AC-03…AC-08 для этих модулей
 - [ ] **Этап 3 — dp, strings, roman, bits** → результат: то же · AC: то же
 - [ ] **Этап 4 — geometry, game, introductory, sorting** → результат: то же

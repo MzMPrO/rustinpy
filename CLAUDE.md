@@ -1,6 +1,6 @@
 # rustinpy
 
-<!-- Одна строка: что это и для кого. -->
+Шпаргалка алгоритмов ICPC/CSES в виде Python-пакета: самодостаточные функции с докстрингом-конспектом и doctest, CLI для поиска и выгрузки в TRD.
 
 **Стек:** Python 3.9+ (stdlib only), hatchling, pytest, ruff, mypy
 **Язык общения:** русский. Язык интерфейса продукта — см. docs/SPEC.md.
@@ -20,9 +20,14 @@
 ## Команды
 
 ```bash
-# Заполняется на этапе 0: запуск, тесты, линтер, миграции
 # Тесты и линтер для хуков заданы в .claude/spec-first.json (меняет только пользователь)
-# пока пусто
+uv venv .venv --python 3.11 && uv pip install --python .venv/Scripts/python.exe -e ".[dev]"
+.venv/Scripts/python.exe -m pytest                 # тесты + doctest (src/ и tests/)
+.venv/Scripts/python.exe -m pytest -m slow -s      # бенчмарки (AC-15), времена -> PROGRESS.md
+.venv/Scripts/ruff.exe check . && .venv/Scripts/ruff.exe format --check .
+.venv/Scripts/mypy.exe                             # --strict, цель 3.10 (D-003)
+# в песочнице Claude Code: pytest --basetemp=<scratchpad>/pt (системный Temp закрыт)
+# 3.9 / 3.13 локально: uv venv <dir> --python 3.9 && uv pip install pytest -e .
 ```
 
 ## Структура
@@ -31,13 +36,20 @@
 
 ## Соглашения по коду
 
-<!-- Заполняется после утверждения SPEC.md: стиль, именование, где бизнес-логика, как пишем тесты -->
+- Каждый алгоритм — `@algo(...)` из `rustinpy._registry`; зависимости внутри модуля — в `requires=[...]` (иначе падает AC-07).
+- Докстринг по шаблону SPEC 4.1 (первая строка `... # русская подсказка`, порядок полей проверяет тест), doctest обязателен.
+- Без рекурсии, без импортов других модулей `rustinpy`, только stdlib; 0-based, отрезки `[l, r)`.
+- В `src/` только символы cp1251 (D-005): `->`, `<=`, `phi` вместо стрелок и греческих букв.
+- Совместимость с 3.9: `from __future__ import annotations`, без `bit_count`, `match`, `pairwise` (test_ac_14).
+- Неподтверждённое условием — `verified=False` + `# NOT VERIFIED` + строка в PROGRESS.md (test_ac_13).
+- Код меняется только через Edit/Write: хук spec-first блокирует запись файлов из Bash.
+- Новый алгоритм = имя в `tests/spec_names.py` + тест с brute-force в `tests/test_<модуль>.py`.
 
 ## Текущее состояние
 <!-- Перезаписывается командой /done. Не больше 15 строк. -->
-- **Фаза:** интервью по ТЗ (код не пишем)
-- **Готово:** —
-- **В работе:** docs/SPEC.md (ЧЕРНОВИК)
-- **Следующий шаг:** ТЗ с архитектором в claude.ai (→ KICKOFF.md) или здесь через /spec
-- **Известные проблемы:** —
+- **Фаза:** реализация, этап 1 из 5 закрыт (SPEC.md УТВЕРЖДЕНО)
+- **Готово:** каркас (реестр, CLI, export), io, interactive, mathx, ds; 908 тестов на 3.9/3.11/3.13
+- **В работе:** —
+- **Следующий шаг:** этап 2 — `graph`, `tree` (SPEC 4.3)
+- **Известные проблемы:** ленивые деревья ~30 мкс/операция в CPython (Python speed в докстрингах); GitHub-репозиторий ещё не создан (нет ника, Q-4)
 - **Обновлено:** 2026-10-17

@@ -129,12 +129,20 @@ def test_ac_07_exported_source_is_self_contained(info: AlgoInfo) -> None:
 
 def _recursive_calls(tree: ast.AST) -> list[str]:
     bad = []
+    # метод нельзя вызвать по голому имени: для методов считаем только self.<имя>(...)
+    methods = {
+        id(item)
+        for cls in ast.walk(tree)
+        if isinstance(cls, ast.ClassDef)
+        for item in cls.body
+        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             for sub in ast.walk(node):
                 if isinstance(sub, ast.Call):
                     f = sub.func
-                    if isinstance(f, ast.Name) and f.id == node.name:
+                    if isinstance(f, ast.Name) and f.id == node.name and id(node) not in methods:
                         bad.append(node.name)
                     elif (
                         isinstance(f, ast.Attribute)
