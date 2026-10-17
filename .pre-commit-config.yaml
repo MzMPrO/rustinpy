@@ -41,7 +41,7 @@ repos:
       - id: tests-before-push
         name: все тесты перед push
         language: system
-        entry: '.venv\Scripts\python.exe -m pytest -q'
+        entry: '.venv/Scripts/python.exe -m pytest -q'
         pass_filenames: false
         always_run: true
         stages: [pre-push]
