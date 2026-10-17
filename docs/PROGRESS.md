@@ -57,6 +57,12 @@
 | `bits.k_subset_xors` | CSES K Subset Xors: с кратностями или без |
 | `bits.all_subarray_xors` | формат CSES All Subarray Xors |
 | `bits.kenobi_skywalker` | заглушка: ограничения ICPC-UZ 2025 K |
+| `geometry.robot_path` | CSES Robot Path: условие не сверено; решение O(n^2) (сверено с пошаговой симуляцией) |
+| `geometry.line_segments_trace` | заглушка: условие CSES Line Segments Trace |
+| `geometry.death_star_min_changes` | заглушка: условие ICPC-UZ 2025 D |
+| `geometry.biathlon_route` | ICPC-UZ 2023 K: реализована только базовая версия (TSP по подмножествам) |
+| `introductory.monotone_subsequences` | CSES: «монотонная» — только возрастающая или любая |
+| `introductory.filling_trominos` | заглушка: условие CSES Filling Trominos |
 
 ## 2026-10-17 · Проект инициализирован (spec-first)
 - **Сделано:** созданы CLAUDE.md, docs/SPEC.md (ЧЕРНОВИК), DECISIONS.md, PROGRESS.md, команды и хуки
@@ -94,3 +100,14 @@
 - **Проблемы / долги:** заглушки `string_functions`, `apostrophe_number`, `roman_symmetry`, `roman_product_unique`, `scroogius_shortest`, `kenobi_skywalker` (этап 5); `houses_and_schools` при n·k > ~3·10⁵ медленный
 - **Ручная проверка:** `rustinpy show SuffixAutomaton`, `rustinpy search palindrome`, `rustinpy export --modules dp,strings --out trd.txt`
 - **Дальше:** этап 4 — `geometry`, `game`, `introductory`, `sorting`
+
+## 2026-10-17 · Этап 4: geometry + game + introductory + sorting
+- **Задание:** docs/handoff/000-kickoff.md, SPEC 4.3
+- **Сделано:** `geometry` (26): Point, cross / dot / orientation, Point Location, точка на отрезке, пересечение отрезков (+ точка пересечения дробями), площадь, точка в многоугольнике, Пик, выпуклая оболочка (с коллинеарными и без), ближайшая пара (D&C снизу вверх и сканирование), манхэттенские расстояния, Intersection Points, Area of Rectangles, Robot Path (NV, O(n²)), Li Chao на максимум, det3 / объём / компланарность, биатлонист — базовая версия (NV, TSP), 2 заглушки; `game` (9): mex, Ним, Ним с ограничением, поддавки, игры вычитания, Гранди на DAG, Stair Game, Grundy's Game, Another Game; `introductory` (28): все задачи Introductory из SPEC (Коллатц, спираль, два коня, два множества, нули факториала, кучи монет, палиндром, яблоки, цифры, красивая перестановка, String Reorder, Mex Grid, ходы коня, код Грея, Ханой, перестановки, подмаски, ферзи, Grid Path Description) + конструктивы (Прюфер, де Брёйн, Inverse Inversions, Monotone Subsequences (NV), Chess Tournament, заглушка Filling Trominos); `sorting` (37): бинпоиски, два указателя, сканирование, расписания (Movie Festival I/II, Room Allocation), суммы 2/3/4, Кадане и версия с длиной, медиана, Missing Coin Sum, Collecting Numbers, Playlist, Towers, Traffic Lights, Иосиф (формула, порядок, запросы), вложенные отрезки, Factory Machines, Tasks and Deadlines, Reading Books, Array Division, подмассивы (сумма x, делимость, ≤ k различных), ближайшие меньшие, встреча посередине, медиана и стоимость скользящего окна (две кучи с ленивым удалением)
+- **Тесты:** 2643 passed на 3.9 / 3.11 / 3.13 (+5 slow) · ruff ✅ · mypy --strict ✅ · полный перебор игр (дерево игры с мемоизацией), сетки целых точек и Пик для многоугольников, пошаговая симуляция робота, перестановки для расписаний / Иосифа / ферзей / конструктивов
+- **Скорость (CPython 3.11):** convex_hull 2·10⁵ 0.46 с · closest_pair 2·10⁵ 1.6 с (сканирование 0.27 с) · area_of_rectangles 10⁵ 2.3 с · sliding_window_median 2·10⁵ 0.35 с · josephus_order 2·10⁵ 0.55 с · concert_tickets 2·10⁵ 0.21 с · meet_in_middle n=40 0.58 с
+- **Спеки:** SPEC.md — этап 4 отмечен
+- **Решения:** новых нет
+- **Проблемы / долги:** `robot_path` O(n²) (для полных ограничений CSES нужна заметающая прямая); заглушки `line_segments_trace`, `death_star_min_changes`, `filling_trominos`; полный перебор 7×7 в `grid_path_description` занимает минуты
+- **Ручная проверка:** `rustinpy show convex_hull`, `rustinpy search josephus`, `rustinpy export --modules geometry,sorting --out trd.txt`
+- **Дальше:** этап 5 — `counting`, `misc`, сверка условий ICPC-UZ (Q-1), README RU/EN, CATALOG, export_trd, чек-лист публикации

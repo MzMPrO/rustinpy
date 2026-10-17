@@ -202,6 +202,49 @@ def test_ac_15_dp_strings_bits_speed() -> None:
 
 
 @pytest.mark.slow
+def test_ac_15_geometry_sorting_speed() -> None:
+    from rustinpy.geometry import area_of_rectangles, closest_pair, closest_pair_sweep, convex_hull
+    from rustinpy.introductory import apple_division
+    from rustinpy.sorting import (
+        concert_tickets,
+        josephus_order,
+        meet_in_middle_count,
+        sliding_window_cost,
+        sliding_window_median,
+    )
+
+    rng = random.Random(5)
+    pts = [(rng.randint(-(10**9), 10**9), rng.randint(-(10**9), 10**9)) for _ in range(N)]
+    rects = []
+    for _ in range(10**5):
+        x, y = rng.randint(0, 10**6), rng.randint(0, 10**6)
+        rects.append((x, y, x + rng.randint(1, 10**4), y + rng.randint(1, 10**4)))
+    arr = [rng.randint(1, 10**9) for _ in range(N)]
+    run_all(
+        [
+            ("convex_hull n = 2e5", 0.6, lambda: convex_hull(pts)),
+            ("closest_pair n = 2e5 (D&C)", 2.0, lambda: closest_pair(pts)),
+            ("closest_pair_sweep n = 2e5", 1.5, lambda: closest_pair_sweep(pts)),
+            ("area_of_rectangles n = 1e5", 3.0, lambda: area_of_rectangles(rects)),
+            (
+                "sliding_window_median n = 2e5, k = 1e3",
+                1.0,
+                lambda: sliding_window_median(arr, 1000),
+            ),
+            ("sliding_window_cost n = 2e5, k = 1e5", 1.2, lambda: sliding_window_cost(arr, 10**5)),
+            ("josephus_order n = 2e5", 1.0, lambda: josephus_order(N, 7)),
+            ("concert_tickets 2e5 / 2e5", 0.6, lambda: concert_tickets(arr, arr[::-1])),
+            (
+                "meet_in_middle_count n = 40",
+                2.0,
+                lambda: meet_in_middle_count([rng.randint(1, 10**9) for _ in range(40)], 10**10),
+            ),
+            ("apple_division n = 20", 0.5, lambda: apple_division(arr[:20])),
+        ]
+    )
+
+
+@pytest.mark.slow
 def test_ac_15_mathx_speed() -> None:
     rng = random.Random(2)
     a = [rng.randrange(998244353) for _ in range(N)]
