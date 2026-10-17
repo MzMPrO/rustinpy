@@ -78,7 +78,7 @@ rustinpy.help("dijkstra")  # докстринг-конспект
 | `counting` | подсчёты и конструктивы CSES: слоны, турниры, функциональные графы, Кёниг, потоки на сетке |
 | `misc` | короткие задачи ICPC-UZ |
 
-Полный список с асимптотикой, задачами и статусом проверки — [docs/CATALOG.md](docs/CATALOG.md).
+Полный список с асимптотикой, задачами и статусом проверки — [docs/CATALOG.md](https://github.com/MzMPrO/rustinpy/blob/main/docs/CATALOG.md).
 
 ### CLI
 
@@ -117,7 +117,7 @@ python scripts/export_trd.py --modules graph,tree,strings --out trd.txt --docstr
 ### Ограничения
 
 - Это CPython: часть алгоритмов медленнее ориентира контеста. Такие места помечены строкой
-  `Python speed:` в докстринге, замеры — в [docs/PROGRESS.md](docs/PROGRESS.md).
+  `Python speed:` в докстринге, замеры — в [docs/PROGRESS.md](https://github.com/MzMPrO/rustinpy/blob/main/docs/PROGRESS.md).
 - Условия задач ICPC Uzbekistan 2023–2025 в открытом доступе не найдены. Решения по ним
   (и несколько задач CSES, условие которых восстановлено по памяти) помечены `NOT VERIFIED`,
   неясные — заглушками с идеей решения. Список — в docs/PROGRESS.md и
@@ -128,7 +128,7 @@ python scripts/export_trd.py --modules graph,tree,strings --out trd.txt --docstr
 
 ### Лицензия
 
-MIT, © Mirahmad. См. [LICENSE](LICENSE).
+MIT, © Mirahmad. См. [LICENSE](https://github.com/MzMPrO/rustinpy/blob/main/LICENSE).
 
 ---
 
@@ -200,7 +200,7 @@ in `rustinpy.io` (`rustinpy show fast_io_template`).
 | `misc` | short ICPC-UZ problems |
 
 The full list with complexities, problems and verification status is in
-[docs/CATALOG.md](docs/CATALOG.md).
+[docs/CATALOG.md](https://github.com/MzMPrO/rustinpy/blob/main/docs/CATALOG.md).
 
 ### CLI
 
@@ -238,7 +238,7 @@ block is self-contained and can be pasted into a solution as is.
 ### Limitations
 
 - This is CPython: some algorithms are slower than a typical contest limit. They carry a
-  `Python speed:` line in the docstring; measurements are in [docs/PROGRESS.md](docs/PROGRESS.md).
+  `Python speed:` line in the docstring; measurements are in [docs/PROGRESS.md](https://github.com/MzMPrO/rustinpy/blob/main/docs/PROGRESS.md).
 - Statements of the ICPC Uzbekistan 2023–2025 problems were not found publicly. Solutions for
   them (and a few CSES problems whose statements were reconstructed from memory) are marked
   `NOT VERIFIED`; unclear ones are stubs with a solution idea. See docs/PROGRESS.md and
@@ -249,4 +249,4 @@ block is self-contained and can be pasted into a solution as is.
 
 ### License
 
-MIT, © Mirahmad. See [LICENSE](LICENSE).
+MIT, © Mirahmad. See [LICENSE](https://github.com/MzMPrO/rustinpy/blob/main/LICENSE).

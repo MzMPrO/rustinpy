@@ -41,6 +41,13 @@ dev = [
     "pre-commit",
 ]
 
+[project.urls]
+Homepage = "https://github.com/MzMPrO/rustinpy"
+Source = "https://github.com/MzMPrO/rustinpy"
+Issues = "https://github.com/MzMPrO/rustinpy/issues"
+Changelog = "https://github.com/MzMPrO/rustinpy/blob/main/CHANGELOG.md"
+Catalog = "https://github.com/MzMPrO/rustinpy/blob/main/docs/CATALOG.md"
+
 [project.scripts]
 rustinpy = "rustinpy.cli:main"
 

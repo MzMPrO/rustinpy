@@ -7,7 +7,7 @@ PyPI / TestPyPI сам (AC-20). Токены не пишутся ни в фай�
 - ручной запуск (Actions → Publish → Run workflow) → сборка, тесты → **TestPyPI**, environment `testpypi`;
 - push тега `v*` (например `v0.1.0`) → сборка, тесты, проверка «тег = `__version__`» → **PyPI**, environment `pypi`.
 
-Ниже `<nick>` — ваш логин на GitHub.
+Репозиторий: https://github.com/MzMPrO/rustinpy (владелец `MzMPrO`).
 
 ## 0. Перед началом (локально)
 
@@ -25,12 +25,11 @@ PyPI / TestPyPI сам (AC-20). Токены не пишутся ни в фай�
 
 1. github.com → New repository → имя `rustinpy`, **Public**, без README / .gitignore / лицензии
    (они уже есть).
-2. Сообщите `<nick>` Claude Code: он добавит в `pyproject.toml` блок `[project.urls]`
-   (Homepage, Source, Issues, Changelog) и сделает ссылки README абсолютными: на странице PyPI
-   относительные ссылки (`docs/CATALOG.md`) не открываются. Это отдельный коммит.
+2. Сделано: в `pyproject.toml` есть `[project.urls]`, ссылки README абсолютные (на странице
+   PyPI относительные ссылки не открываются).
 3. Отправка кода:
    ```bash
-   git remote add origin https://github.com/<nick>/rustinpy.git
+   git remote add origin https://github.com/MzMPrO/rustinpy.git
    git push -u origin main
    ```
 4. Actions → CI: дождаться зелёного прогона на 3.9–3.13 и Windows (**AC-18**).
@@ -47,7 +46,7 @@ Settings → Environments → New environment:
 1. Аккаунт на https://test.pypi.org (отдельный от PyPI), подтвердите email, включите 2FA.
 2. Your account → Publishing → **Add a new pending publisher** → GitHub:
    - PyPI Project Name: `rustinpy`
-   - Owner: `<nick>`
+   - Owner: `MzMPrO`
    - Repository name: `rustinpy`
    - Workflow name: `publish.yml`
    - Environment name: `testpypi`
