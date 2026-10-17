@@ -7,4 +7,5 @@
 ### Added
 - Каркас пакета: реестр `@algo`, `show` / `search` / `list_algos` / `help`, CLI `rustinpy list|show|search|export`.
 - `rustinpy.io`, `rustinpy.interactive`, `rustinpy.mathx`, `rustinpy.ds` (140 алгоритмов).
+- `rustinpy.graph` (64) и `rustinpy.tree` (20): обходы, кратчайшие пути, DAG, DSU/MST, SCC/2-SAT, мосты, Эйлер, функциональные графы, потоки, паросочетания, LCA, HLD, центроиды, изоморфизм.
 - Бенчмарки `pytest -m slow`; CI на Python 3.9–3.13 и Windows; публикация через Trusted Publishing.

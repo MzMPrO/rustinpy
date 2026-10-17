@@ -42,6 +42,9 @@
 | `ds.isotonic_sse_mod` | ICPC-UZ 2023 L: какие запросы; реализована только подгонка и SSE |
 | `ds.exclusions` | заглушка: определение f(k) в ICPC-UZ 2025 E |
 | `ds.generic_strings` | заглушка: условие ICPC-UZ 2023 G |
+| `graph.escalators` | заглушка: условие ICPC-UZ 2023 E |
+| `graph.bus_companies` | заглушка: условие CSES Bus Companies не сверено |
+| `tree.fix_the_leak` | заглушка: что такое «агенты» и «цепочки» в ICPC-UZ 2025 F |
 
 ## 2026-10-17 · Проект инициализирован (spec-first)
 - **Сделано:** созданы CLAUDE.md, docs/SPEC.md (ЧЕРНОВИК), DECISIONS.md, PROGRESS.md, команды и хуки
@@ -57,3 +60,14 @@
 - **Проблемы / долги:** ленивые деревья медленные в CPython (~30 мкс/оп., документировано); тесты в песочнице Claude Code требуют `--basetemp` в scratchpad; GitHub-репозиторий не создан (нужен ник владельца) — CI ещё ни разу не запускался
 - **Ручная проверка:** `pip install -e .` и `rustinpy list`, `rustinpy show factorize`, `rustinpy export --modules ds --out trd.txt` — открыть trd.txt, глянуть читаемость; просмотреть таблицу NOT VERIFIED выше
 - **Дальше:** этап 2 — `graph`, `tree`
+
+## 2026-10-17 · Этап 2: graph + tree
+- **Задание:** docs/handoff/000-kickoff.md, SPEC 4.3 (`rustinpy.graph`, `rustinpy.tree`)
+- **Сделано:** `graph` (64): обходы (BFS/итеративный DFS, компоненты, двудольность, циклы, обхват), кратчайшие пути (0-1 BFS, Дейкстра + путь/статистика/купон/состояния/k кратчайших, Беллман-Форд с -INF, отрицательный цикл, High Score, Флойд), DAG (Кан, лекс. минимум, Course Schedule II, подсчёт путей, длиннейший путь, достижимость битсетами), DSU/RollbackDSU/Краскал/Прим, SCC (Тарьян, Косараю, конденсация, Coin Collector, 2-SAT, Reachability Queries), мосты и точки сочленения, Эйлер (Хирхольцер), функциональные графы (подъёмы, Planets Cycles/Queries II), потоки (Диниц, Эдмондс-Карп, min-cut, непересекающиеся пути, min-cost flow), паросочетания (Хопкрофт-Карп, Кун, венгерский), гамильтонов путь, обход конём, Critical Cities, Flight Route Requests, Network Renovation, Strongly Connected / Even Outdegree Edges; `tree` (20): порядок обхода, размеры, диаметр, Tree Distances I/II, центроид, Euler tour, LCA (подъёмы и Euler + sparse table), паросочетание, Counting Paths, Subtree/Path Queries, HLD, центроидная декомпозиция, Fixed-Length Paths I/II, Distinct Colors, изоморфизм (AHU, с корнем и без). Всё без рекурсии (AC-08 проверяет AST)
+- **Тесты:** 1442 passed на 3.9 / 3.11 / 3.13 (+3 slow) · ruff ✅ · mypy --strict ✅ · каждая функция graph/tree сверена с перебором (Флойд, перечисление путей/разрезов/паросочетаний/перестановок, удаление вершин и рёбер, рекурсивный эталон DFS); `rustinpy export --modules graph,tree` → 3424 строки, компилируется, ширина ≤ 100
+- **Скорость (CPython 3.11):** bfs 2·10⁵/4·10⁵ 0.14 с · dijkstra 0.43 с · scc_tarjan 0.39 с · LCA build + 2·10⁵ запросов (глубина ~4·10⁴) 1.3 с · HLD + 5·10⁴ путей 0.65 с · fixed_length_paths 2·10⁵ 1.6 с, range 1.8 с · Dinic (единичный двудольный, 1.8·10⁵ рёбер) 0.23 с · Хопкрофт-Карп 10⁵+10⁵, 3·10⁵ рёбер 0.84 с · Флойд n=500 10.8 с (Python speed) · гамильтонов путь, полный граф n=18 2.7 с · венгерский 500×500 0.63 с
+- **Спеки:** SPEC.md — этап 2 отмечен; отклонения имён от 4.3 без смены смысла: `toposort_smallest_first` вместо `toposort_reverse_trick` (Course Schedule II), `reachability_queries` живёт в `graph/scc.py`, DSU и MST в одном файле `graph/dsu.py` (общий `requires`)
+- **Решения:** новых D-записей нет (конвенции D-008 соблюдены)
+- **Проблемы / долги:** заглушки `graph.escalators`, `graph.bus_companies`, `tree.fix_the_leak` (этап 5); `knights_tour` — эвристика с перезапусками (проверена на всех 64 стартах 8×8)
+- **Ручная проверка:** `rustinpy show dijkstra`, `rustinpy show HLD`, `rustinpy export --modules graph,tree --out trd.txt` — проверить читаемость в TRD
+- **Дальше:** этап 3 — `dp`, `strings` (+ `roman`), `bits`

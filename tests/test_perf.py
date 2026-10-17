@@ -101,6 +101,70 @@ def test_ac_15_ds_speed() -> None:
 
 
 @pytest.mark.slow
+def test_ac_15_graph_tree_speed() -> None:
+    from rustinpy.graph import Dinic, bfs, dijkstra, hopcroft_karp, scc_tarjan
+    from rustinpy.tree import HLD, LCA, fixed_length_paths, tree_distance_sums
+
+    rng = random.Random(3)
+    n = m = N
+    wadj: list[list[tuple[int, int]]] = [[] for _ in range(n)]
+    dadj: list[list[int]] = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v = rng.randrange(n), rng.randrange(n)
+        wadj[u].append((v, rng.randint(1, 10**9)))
+        dadj[u].append(v)
+    for i in range(n - 1):  # цепочка i -> i + 1: из 0 достижим весь граф
+        wadj[i].append((i + 1, rng.randint(1, 10**9)))
+        dadj[i].append(i + 1)
+    tadj: list[list[int]] = [[] for _ in range(n)]
+    for v in range(1, n):
+        p = rng.randrange(max(0, v - 10), v)  # глубокое дерево: проверка отсутствия рекурсии
+        tadj[p].append(v)
+        tadj[v].append(p)
+    qs = [(rng.randrange(n), rng.randrange(n)) for _ in range(N)]
+
+    def lca_all() -> None:
+        t = LCA(n, tadj)
+        for a, b in qs:
+            t.lca(a, b)
+
+    def hld_all() -> None:
+        h = HLD(n, tadj, [rng.randint(1, 10**9) for _ in range(n)])
+        for a, b in qs[: N // 4]:
+            h.path_max(a, b)
+
+    def dinic_grid() -> None:
+        side = 150  # двудольный граф 2 * 150^2 вершин -> поток по сетке
+        d = Dinic(2 * side * side + 2)
+        s, t = 2 * side * side, 2 * side * side + 1
+        for i in range(side * side):
+            d.add_edge(s, i, 1)
+            d.add_edge(side * side + i, t, 1)
+            for j in (i, (i + 1) % (side * side), (i + side) % (side * side)):
+                d.add_edge(i, side * side + j, 1)
+        d.max_flow(s, t)
+
+    def matching() -> None:
+        k = 10**5
+        adj = [[rng.randrange(k) for _ in range(3)] for _ in range(k)]
+        hopcroft_karp(k, k, adj)
+
+    run_all(
+        [
+            ("bfs n = 2e5, m = 4e5", 0.3, lambda: bfs(n, dadj, 0)),
+            ("dijkstra n = 2e5, m = 4e5", 0.8, lambda: dijkstra(n, wadj, 0)),
+            ("scc_tarjan n = 2e5, m = 4e5", 0.8, lambda: scc_tarjan(n, dadj)),
+            ("LCA build + 2e5 queries (deep tree)", 2.5, lca_all),
+            ("HLD build + 5e4 path_max", 2.0, hld_all),
+            ("tree_distance_sums n = 2e5", 0.5, lambda: tree_distance_sums(n, tadj)),
+            ("fixed_length_paths n = 2e5, k = 7", 8.0, lambda: fixed_length_paths(n, tadj, 7)),
+            ("Dinic unit grid 45000 + 45000 vertices", 4.0, dinic_grid),
+            ("hopcroft_karp 1e5 + 1e5, 3e5 edges", 3.0, matching),
+        ]
+    )
+
+
+@pytest.mark.slow
 def test_ac_15_mathx_speed() -> None:
     rng = random.Random(2)
     a = [rng.randrange(998244353) for _ in range(N)]

@@ -786,7 +786,7 @@ rustin/                         # корень репозитория (папк�
 ## 15. План реализации
 
 - [x] **Этап 1 — каркас + mathx + ds:** git, `pyproject.toml`, `.gitignore`, LICENSE, CHANGELOG, `_registry`, `__init__`, `cli`, `io`, `interactive`, CI, publish.yml, мета-тесты, `mathx`, `ds` → результат: `pip install -e .[dev]`, ruff/mypy/pytest зелёные, CLI показывает алгоритмы mathx/ds · AC: AC-01, AC-09, AC-12, AC-14 (частично AC-03…AC-08)
-- [ ] **Этап 2 — graph, tree** → результат: модули с brute-force тестами · AC: AC-03…AC-08 для этих модулей
+- [x] **Этап 2 — graph, tree** → результат: модули с brute-force тестами · AC: AC-03…AC-08 для этих модулей
 - [ ] **Этап 3 — dp, strings, roman, bits** → результат: то же · AC: то же
 - [ ] **Этап 4 — geometry, game, introductory, sorting** → результат: то же
 - [ ] **Этап 5 — counting, misc, README, CATALOG, export_trd, PUBLISHING** → результат: все AC автоматизированы и зелёные, сборка и `twine check` проходят, чек-лист публикации готов · AC: AC-02, AC-10, AC-11, AC-13, AC-15, AC-16, AC-17, AC-20
